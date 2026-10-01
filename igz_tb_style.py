@@ -1,30 +1,16 @@
 # =========================================================================
 # Extensão: igz_tb_style
 # Autor: Ezequiel M. Rezende
-# Versão: 1.0.0
-# Data: 2026-09-30
+# Versão: 1.2.0
+# Data: 2026-10-01
 # Licença: GPL-3.0-or-later (mesma do IngeTrazo)
 #
 # IngeTrazo — Barra de Ferramentas "Styles"
 # Local: <plugins>/igz_tb_style.py
 #
-# ⚠️  AVISO DE API FRÁGIL
-# -------------------------------------------------------------------------
-# O `docs/plugins.md` do IngeTrazo afirma explicitamente:
-#     "The plugin API is not stable yet — expect breaking changes during
-#      the 0.x series."
-#
-# Este plugin usa alguns pontos que NÃO estão documentados como API
-# pública de extensão:
-#
-#   • viewport.style_override         (atributo público mas não na API)
-#   • core.style.style_by_name(...)   (módulo core — semi-público)
-#   • QToolBar criada direto via PySide, sem a API `app.add_*`
-#
-# Se qualquer um desses mudar numa próxima versão 0.x, o plugin pode
-# parar de funcionar. Os pontos frágeis estão marcados abaixo com
-# "⚠️ FRÁGIL". A lógica principal é tolerante a falhas: se algo der
-# errado, apenas loga e retorna, sem quebrar o IngeTrazo.
+# Espelha os comandos do menu Câmera ▸ Estilo.
+# Em vez de reimplementar a lógica, encontra a QAction nativa e
+# dispara trigger() — exatamente o que o usuário faria clicando.
 # =========================================================================
 from __future__ import annotations
 
@@ -34,8 +20,7 @@ import traceback
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import QToolBar, QMessageBox, QSizePolicy   # QSizePolicy necessário
-
+from PySide6.QtWidgets import QToolBar, QMessageBox, QSizePolicy, QFrame
 
 DEBUG = True
 
@@ -48,24 +33,14 @@ def _log(msg: str) -> None:
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
 def _localizar_pasta_icones():
-    """Ícones ficam em `<plugins>/icons/`, ao lado deste arquivo."""
     c = os.path.join(_HERE, "icons")
     return c if os.path.isdir(c) else None
 
 _ICONS_DIR = _localizar_pasta_icones()
-_log(f"pasta de ícones: {_ICONS_DIR}")
 
 
-# --- Descoberta da janela principal ---------------------------------------
+# --- Descoberta da MainWindow ---------------------------------------------
 def _descobrir_main_window():
-    """
-    Descoberta da MainWindow via QApplication.topLevelWidgets().
-
-    A API oficial (plugins.md) expõe `app.window` no `setup(app)`;
-    porém usar essa referência diretamente torna o plugin dependente
-    do ciclo de vida da app. A descoberta dinâmica é mais robusta
-    durante a fase 0.x.
-    """
     try:
         from PySide6.QtWidgets import QApplication
         qapp = QApplication.instance()
@@ -82,104 +57,54 @@ def _descobrir_main_window():
     return None
 
 
-# --- Definição das ações --------------------------------------------------
-# (nome, arquivo_ícone, dica, tipo, valor)
-# tipo = "style"  → aplica o estilo interno 'valor' (nome em core.style)
-# tipo = "toggle" → inverte o flag booleano 'valor' no estilo atual
-ACOES_STYLE = [
-    ("Back Edges",  "tb_backedges.svg",  "Exibe arestas posteriores",         "toggle", "back_edges"),
-    ("Hidden Line", "tb_hiddenline.svg", "Estilo linha oculta",               "style",  "Hidden line"),
-    ("Monochrome",  "tb_monochrome.svg", "Estilo monocromático",              "style",  "Monochrome"),
-    ("PBR",         "tb_pbr.svg",        "Renderização com texturas (Default)","style", "Default"),
-    ("Shaded",      "tb_shaded.svg",     "Estilo sombreado",                  "style",  "Shaded"),
-    ("Textures",    "tb_textures.svg",   "Texturas em fundo branco (Architectural)","style", "Architectural"),
-    ("Wireframe",   "tb_wireframe.svg",  "Estilo wireframe",                  "style",  "Wireframe"),
-    ("X-Ray",       "tb_xray.svg",       "Estilo raio-X (transparente)",      "style",  "X-ray"),
+# --- Mapa: nome do botão → texto exato da QAction no menu ----------------
+# (ordem idêntica à do menu Câmera ▸ Estilo)
+ACOES_MENU = [
+    ("Padrão",          "tb_default.svg",      "Padrão"),
+    ("Arquitetônico",   "tb_architectural.svg","Arquitetônico"),
+    ("Sombreado",       "tb_shaded.svg",       "Sombreado"),
+    ("Linha oculta",    "tb_hiddenline.svg",   "Linha oculta"),
+    ("Monocromático",   "tb_monochrome.svg",   "Monocromático"),
+    ("Wireframe",       "tb_wireframe.svg",    "Wireframe"),
+    ("Raio-X",          "tb_xray.svg",         "Raio-X"),
+    # separador implícito no layout abaixo
+    ("Alternar raio-X", "tb_xraytoggle.svg",   "Alternar raio-X"),
+    ("Arestas",         "tb_edges.svg",        "Arestas"),
+    ("Perfis",          "tb_profiles.svg",     "Perfis"),
+    ("Arestas de trás", "tb_backedges.svg",    "Arestas de trás"),
 ]
 
 
-# --- Callback dos botões --------------------------------------------------
-def _aplicar_estilo(nome: str, tipo: str, valor: str, main_window) -> None:
+# --- Encontra e dispara a QAction nativa ----------------------------------
+def _disparar_acao(main_window, texto_acao: str) -> bool:
     """
-    tipo='style'  -> aplica o estilo interno 'valor' via viewport.style_override
-    tipo='toggle' -> alterna o flag booleano 'valor' no estilo efetivo
-
-    ⚠️ FRÁGIL: usa `viewport.style_override` (atributo Qt, não é API de
-    extensão). Em IngeTrazo 0.x funciona; se virar 1.x, é provável que
-    apareça uma API pública (`app.viewport.set_style(...)`). Basta
-    trocar aqui.
+    Procura uma QAction com o texto exato (case-sensitive) na MainWindow
+    e dispara trigger() — exatamente como o menu nativo faria.
     """
-    import core.style   # ⚠️ FRÁGIL: módulo `core` (semi-público)
-
-    viewport = getattr(main_window, "viewport", None)
-    if viewport is None:
-        _log("viewport indisponível")
-        return
-
     try:
-        if tipo == "style":
-            style = core.style.style_by_name(valor)
-            if style is None:
-                _log(f"estilo '{valor}' não encontrado em core.style")
-                return
-            # Aplica o estilo via atributo do viewport.
-            # Reatribuir (em vez de mutar) é o que força o redesenho.
-            viewport.style_override = style
-            _log(f"estilo aplicado: {valor}")
-
-        elif tipo == "toggle":
-            import copy
-            # Base: o override atual (se houver) ou o estilo Default
-            base = getattr(viewport, "style_override", None) \
-                   or core.style.style_by_name("Default")
-            if base is None:
-                _log("não foi possível obter um estilo base para o toggle")
-                return
-
-            # Style é um @dataclass → cópia rasa basta. Mutar o objeto
-            # original diretamente não dispara repaint (cache interno).
-            novo = copy.copy(base)
-            valor_atual = bool(getattr(base, valor, False))
-            setattr(novo, valor, not valor_atual)
-            viewport.style_override = novo
-            _log(f"flag '{valor}': {valor_atual} → {getattr(novo, valor)}")
-
-        # Pede redesenho
-        if hasattr(viewport, "update"):
-            viewport.update()
-
-        # Atualiza a dica de status, se a MainWindow expuser
-        if hasattr(main_window, "status_hint"):
-            try:
-                main_window.status_hint = f"Styles: {nome}"
-            except Exception:
-                pass
-
+        for a in main_window.findChildren(QAction):
+            if a.text() == texto_acao:
+                a.trigger()
+                _log(f"trigger: '{texto_acao}'")
+                return True
+        _log(f"QAction '{texto_acao}' não encontrada no menu")
+        return False
     except Exception:
         traceback.print_exc()
+        return False
 
 
 # --- Criação da toolbar ---------------------------------------------------
 _TOOLBAR_CRIADA = False
 
-def _criar_toolbar_style(main_window) -> None:
-    """
-    Cria a barra "Styles".
+from PySide6.QtCore import Qt, QTimer   # adicione QTimer ao import
 
-    ⚠️ FRÁGIL: `QToolBar` + `main_window.addToolBar(...)` são API do Qt,
-    não da extensão. O `docs/plugins.md` recomenda `app.add_panel(...)`
-    ou `app.add_menu_action(...)`. Uma toolbar horizontal como esta não
-    tem equivalente oficial na API 0.x; o comportamento aqui é
-    equivalente ao das barras nativas (Shadows, Styles, etc.) e por
-    isso é funcional — mas fica fora do caminho documentado.
-    """
+def _criar_toolbar_style(main_window) -> None:
     global _TOOLBAR_CRIADA
     if _TOOLBAR_CRIADA:
-        _log("toolbar já criada — ignorando")
         return
-
     if main_window is None or not hasattr(main_window, "addToolBar"):
-        _log("toolbar não criada: MainWindow indisponível")
+        _log("MainWindow indisponível")
         return
 
     try:
@@ -188,61 +113,64 @@ def _criar_toolbar_style(main_window) -> None:
         tb.setWindowTitle("Styles")
         main_window.addToolBar(Qt.TopToolBarArea, tb)
 
-        for nome, arquivo, dica, tipo, valor in ACOES_STYLE:
+        def _adicionar_separador():
+            """Linha vertical com cor forçada — visível sobre o fundo escuro."""
+            f = QFrame(tb)
+            f.setFrameShape(QFrame.VLine)
+            f.setFrameShadow(QFrame.Plain)          # ← Plain, não Sunken
+            f.setFixedWidth(1)
+            f.setContentsMargins(6, 4, 6, 4)
+            f.setStyleSheet(
+                "QFrame { background-color: rgba(160, 160, 160, 0.9); "
+                "border: none; }"
+            )
+            tb.addWidget(f)
+
+        for i, (nome, arquivo, texto_acao) in enumerate(ACOES_MENU):
+            # Separador antes dos toggles (após "Raio-X", índice 6)
+            if i == 7:
+                _adicionar_separador()
+
             icon = QIcon()
             if _ICONS_DIR:
                 p = os.path.join(_ICONS_DIR, arquivo)
                 if os.path.isfile(p):
                     icon = QIcon(p)
-                else:
-                    _log(f"ícone não encontrado: {p}")
 
             a = QAction(icon, nome, main_window)
-            a.setToolTip(dica)
-            a.setStatusTip(dica)
+            a.setToolTip(texto_acao)
+            a.setStatusTip(texto_acao)
             a.triggered.connect(
-                lambda _=False, n=nome, t=tipo, v=valor:
-                    _aplicar_estilo(n, t, v, main_window)
+                lambda _=False, t=texto_acao:
+                    _disparar_acao(main_window, t)
             )
             tb.addAction(a)
 
-        # Faz a barra acoplada respeitar o tamanho do conteúdo
-        # (senão o Qt estica a barra para preencher a linha inteira).
+        # Faz a barra acoplada respeitar o tamanho do conteúdo.
+        # Sem +40 de margem — o sizeHint já inclui o separador.
         tb.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         tb.setMaximumWidth(tb.sizeHint().width())
 
         _TOOLBAR_CRIADA = True
-        _log("toolbar 'Styles' criada")
+        _log("toolbar 'Styles' criada (espelhando o menu nativo)")
     except Exception:
         traceback.print_exc()
-
-
-# --- setup() — ponto de entrada -------------------------------------------
+        
+        
+# --- setup() --------------------------------------------------------------
 def setup(app):
-    """
-    Ponto de entrada chamado UMA vez pelo IngeTrazo, quando a janela
-    principal já existe. Ver `docs/plugins.md` §"Beyond tools: setup(app)".
-
-    Este plugin NÃO define subclasse de `Tool`, portanto não aparece no
-    menu Extensions nem tem atalho. Para adicionar isso, ver README.md.
-    """
     print(f"[igz_tb_style] setup(app) — PID={os.getpid()}",
           file=sys.stderr, flush=True)
-    _log(f"app: {type(app).__module__}.{type(app).__name__}")
-
     try:
-        main_window = _descobrir_main_window()
-        if main_window is None:
-            main_window = getattr(app, "main_window", None) \
-                          or getattr(app, "window", None)
-
-        if main_window is None:
+        mw = _descobrir_main_window() \
+             or getattr(app, "main_window", None) \
+             or getattr(app, "window", None)
+        if mw is None:
             QMessageBox.warning(
                 None, "Styles",
-                "Não foi possível localizar a janela principal do IngeTrazo."
+                "Não foi possível localizar a janela principal."
             )
             return
-
-        _criar_toolbar_style(main_window)
+        _criar_toolbar_style(mw)
     except Exception:
         traceback.print_exc()
