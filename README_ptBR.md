@@ -4,8 +4,8 @@ Duas barras de ferramenta para o [IngeTrazo](https://github.com/ingelibre/ingetr
 inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 
 - **Autor:** Ezequiel M. Rezende
-- **Data:** 2026-09-30
-- **Versão:** 1.0.0
+- **Data:** 2026-10-01
+- **Versão:** 1.3.0
 - **Licença:** [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html)
   (mesma do IngeTrazo — ver [LICENSE](https://github.com/ingelibre/ingetrazo/blob/main/LICENSE))
 
@@ -17,19 +17,24 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 <plugins>/
 ├── igz_tb_style.py          # barra "Styles"
 ├── igz_tb_shadows.py        # barra "Shadows"
-├── README.md                # este arquivo
+├── README.md                # este arquivo (inglês)
 ├── README_ptBR.md           # esta versão em português
 ├── LICENSE                  # texto completo da GPL-3.0
 ├── THIRD-PARTY.md           # avisos de terceiros
 └── icons/
-    ├── tb_backedges.svg
+    ├── tb_default.svg
+    ├── tb_architectural.svg
+    ├── tb_shaded.svg
     ├── tb_hiddenline.svg
     ├── tb_monochrome.svg
-    ├── tb_pbr.svg
-    ├── tb_shaded.svg
-    ├── tb_textures.svg
     ├── tb_wireframe.svg
     ├── tb_xray.svg
+    ├── tb_xraytoggle.svg
+    ├── tb_edges.svg
+    ├── tb_profiles.svg
+    ├── tb_backedges.svg
+    ├── tb_hiddenobjects.svg
+    ├── tb_hiddengeometry.svg
     └── tb_shadowtoggle.svg
 ```
 
@@ -37,22 +42,44 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 
 ## Barra "Styles"
 
-Oito botões que aplicam os estilos internos do IngeTrazo ao viewport.
+Treze botões que **espelham os comandos nativos** do menu
+**Câmera ▸ Estilo**. A barra não reimplementa nenhuma lógica de estilo —
+ela localiza a `QAction` correspondente na janela principal e chama
+`trigger()` nela, exatamente como se o usuário tivesse clicado no item
+do menu.
 
-| Botão           | Estilo aplicado             | Observação |
-|-----------------|-----------------------------|------------|
-| **Back Edges**  | *(toggle)* `back_edges`     | Alterna arestas posteriores no estilo atual |
-| **Hidden Line** | `"Hidden line"`             | |
-| **Monochrome**  | `"Monochrome"`              | |
-| **PBR**         | `"Default"`                 | Aproximação — o IngeTrazo não tem um estilo "PBR" separado |
-| **Shaded**      | `"Shaded"`                  | |
-| **Textures**    | `"Architectural"`           | Texturas em fundo branco |
-| **Wireframe**   | `"Wireframe"`               | |
-| **X-Ray**       | `"X-ray"`                   | |
+Os rótulos abaixo são as **strings-fonte em inglês** do IngeTrazo — as
+mesmas chaves que o menu nativo passa para `tr()`. Os botões aparecem
+traduzidos para o idioma em que o IngeTrazo estiver (ver *Idioma*
+abaixo), e cada botão mostra o mesmo texto do item de menu nativo.
 
-**Mecanismo:** `viewport.style_override = core.style.style_by_name("...")`.
-Reatribuir o atributo (em vez de mutar o objeto `Style` existente) é o que
-força o redesenho — o motor do IngeTrazo faz cache do estilo por frame.
+| Botão (origem)      | Tipo   |
+|---------------------|--------|
+| **Default**         | estilo |
+| **Architectural**   | estilo |
+| **Shaded**          | estilo |
+| **Hidden line**     | estilo |
+| **Monochrome**      | estilo |
+| **Wireframe**       | estilo |
+| **X-ray**           | estilo |
+| **Toggle X-ray**    | toggle |
+| **Edges**           | toggle |
+| **Profiles**        | toggle |
+| **Back edges**      | toggle |
+| **Hidden Objects**  | toggle |
+| **Hidden Geometry** | toggle |
+
+**Mecanismo:** para cada botão, `_trigger_action()` procura na janela
+principal a `QAction` nativa cujo rótulo é aquela string-fonte em inglês
+— em qualquer idioma, via `core.i18n.source_of` — e chama `trigger()`
+nela. Nada é mutado diretamente — o comando nativo roda com todos os seus
+efeitos usuais (estado do menu, eixos, redesenho etc.), então a barra e o
+menu nunca saem de sincronia.
+
+> A ordem da barra segue a ordem do menu, com um separador inserido
+> antes dos toggles de exibição (*Toggle X-ray*, *Edges*, *Profiles*,
+> *Back edges*) e outro antes dos toggles de visibilidade
+> (*Hidden Objects*, *Hidden Geometry*).
 
 ---
 
@@ -60,22 +87,20 @@ força o redesenho — o motor do IngeTrazo faz cache do estilo por frame.
 
 Três sliders + um toggle, seguindo o modelo do SketchUp.
 
-| Controle | Campo afetado                       | Faixa |
-|----------|-------------------------------------|-------|
+| Controle | Campo afetado                        | Faixa |
+|----------|--------------------------------------|-------|
 | **Toggle** (ícone) | `scene.shadows.enabled`     | on/off |
-| **Data** | `scene.shadows.month` + `.day`      | 1–365 (dia do ano) |
-| **Hora** | `scene.shadows.hour` + `.minute`    | 0–1439 min |
-| **Int.** | `scene.shadows.darkness`            | 0.0–1.0 |
+| **Data** | `scene.shadows.month` + `.day`       | 1–365 (dia do ano) |
+| **Hora** | `scene.shadows.hour` + `.minute`     | 0–1439 min |
+| **Int.** | `scene.shadows.darkness`             | 0.0–1.0 |
 
 **Mecanismo:** mudar os campos de `scene.shadows` e chamar
 `viewport.update()`. O `paintGL` do IngeTrazo **relê `scene.shadows` a
 cada frame** e recalcula a direção do sol, regenera o shadow map e
 redesenha tudo automaticamente. Nada mais precisa ser tocado.
 
-> ⚠️ Testes anteriores mostraram que setar `viewport._LIGHT`,
-> `viewport._shadow_key` ou chamar `viewport._ensure_shadow_map()` **não
-> é necessário** e, na prática, não muda a sombra visualmente. O caminho
-> correto é sempre via `scene.shadows` + `update()`.
+Arrastar qualquer slider liga as sombras automaticamente (senão os
+ajustes não ficariam visíveis).
 
 ---
 
@@ -94,9 +119,8 @@ marcados com `⚠️ FRÁGIL` no código-fonte. Lista consolidada:
 
 | Símbolo | Onde | Por quê |
 |---|---|---|
-| `viewport.style_override` | `_aplicar_estilo` | Atributo Qt do viewport; não é API de extensão |
-| `core.style.style_by_name(...)` | `_aplicar_estilo` | Módulo `core` (semi-público) |
-| `QToolBar` + `MainWindow.addToolBar(...)` | `_criar_toolbar_style` | Fora da API `app.add_panel` / `app.add_menu_action` |
+| Busca de `QAction` por rótulo | `_find_action` / `_trigger_action` | Casa a string-fonte em inglês do IngeTrazo via `core.i18n`; só quebra se o IngeTrazo renomear essa fonte |
+| `QToolBar` + `MainWindow.addToolBar(...)` | `_create_style_toolbar` | Fora da API `app.add_panel` / `app.add_menu_action` |
 
 ### Pontos frágeis em `igz_tb_shadows.py`
 
@@ -104,8 +128,8 @@ marcados com `⚠️ FRÁGIL` no código-fonte. Lista consolidada:
 |---|---|---|
 | `viewport.scene.shadows` | `_get_scene_shadows` | Cadeia interna; a cena não está em `app.scene` |
 | `ShadowSettings.{enabled, month, day, hour, minute, darkness}` | várias | Dataclass interna (`core.sun`) |
-| `QToolBar` + `MainWindow.addToolBar(...)` | `_criar_toolbar_shadows` | Idem acima |
-| Texto literal `"Sombras"` na busca da QAction nativa | `_on_toggle` | Quebra se a UI for traduzida |
+| `QToolBar` + `MainWindow.addToolBar(...)` | `_create_shadows_toolbar` | Idem acima |
+| Busca da ação nativa `"Shadows"` | `_on_toggle` | Encontrada pela string-fonte em inglês via `core.i18n`; só quebra se o IngeTrazo renomear |
 
 ### O que **está** de acordo com o `plugins.md`
 
@@ -113,8 +137,8 @@ marcados com `⚠️ FRÁGIL` no código-fonte. Lista consolidada:
 - Define `setup(app)` no nível do módulo.
 - Tolerante a falhas: qualquer exceção dentro dos callbacks é capturada e
   logada — o app continua funcionando.
-- Não mexe no documento sem passar pelo comando (na verdade não mexe em
-  geometria; só em `scene.shadows`).
+- Não mexe no documento sem passar pelo comando (a barra Styles delega
+  tudo aos comandos nativos; a barra Shadows só toca em `scene.shadows`).
 - Não assume `sys.path` nem importa o próprio pacote.
 - Respeita threading (tudo na main thread).
 
@@ -134,11 +158,41 @@ marcados com `⚠️ FRÁGIL` no código-fonte. Lista consolidada:
 
 ### Se a API 0.x quebrar
 
-- `viewport.style_override` → migrar para a futura API pública de estilos
-  (`app.viewport.set_style(...)` ou similar), quando existir.
-- `viewport.scene.shadows` → verificar se `app.scene` passa a expor a
-  cena diretamente (o `plugins.md` menciona `app.scene` na API `setup`).
-- `QToolBar` → se aparecer `app.add_toolbar(...)`, migrar.
+- **Barra Styles:** a busca casa as strings-fonte em inglês do IngeTrazo
+  através do `core.i18n`, então traduzir a interface não quebra mais.
+  Só quebraria se o IngeTrazo renomeasse a própria string-fonte (aí
+  atualize `MENU_ACTIONS`); cada falha é registrada no log.
+- **Barra Shadows:** `viewport.scene.shadows` → verificar se `app.scene`
+  passa a expor a cena diretamente (o `plugins.md` menciona `app.scene`
+  na API `setup`).
+- **Ambas:** `QToolBar` → se aparecer `app.add_toolbar(...)`, migrar.
+
+---
+
+## Idioma & internacionalização
+
+A interface do IngeTrazo é traduzida por um catálogo JSON leve
+(`core/i18n.py`; o inglês é o idioma-fonte; os catálogos ficam em
+`i18n/<lang>.json`). As barras o reutilizam:
+
+- **Nomes de comandos nativos** (`Default`, `Edges`, `Shadows`…) vêm
+  direto do catálogo do IngeTrazo via `tr()`, então sempre batem com o que
+  o menu **Câmera ▸ Estilo** mostra.
+- **Nossas próprias strings** (títulos das barras, os rótulos dos sliders
+  `Date`/`Time`/`Int.`, a dica do toggle e o diálogo de erro) não estão no
+  catálogo do IngeTrazo, então o plugin traz uma pequena tabela para
+  inglês, espanhol, indonésio, italiano e português do Brasil; qualquer
+  outro idioma cai no inglês.
+- **Trocar de idioma:** **Janela ▸ Idioma** do IngeTrazo aplica na próxima
+  inicialização (ele avisa isso numa mensagem). As barras seguem o idioma
+  ao iniciar e um pequeno timer também as re-rotula no momento em que o
+  idioma muda, sem tocar no resto da interface.
+
+Você **não** precisa editar nada para aproveitar um idioma que o IngeTrazo
+já oferece: os nomes de comandos vêm do catálogo dele. Para traduzir as
+poucas strings do próprio plugin para um novo idioma, acrescente o código
+em `_LOCAL` (e, para as abreviações de mês, `_LOCAL_MONTHS`) no topo de
+`igz_tb_shadows.py` / `igz_tb_style.py`.
 
 ---
 
@@ -159,18 +213,17 @@ As barras **Styles** e **Shadows** aparecem na área superior.
 ## Uso
 
 ### Styles
-- Clique em qualquer botão para trocar o estilo do viewport.
-- **Back Edges** é um **toggle**: clique para alternar arestas
-  posteriores no estilo atual.
+- Clique em qualquer botão para rodar o comando correspondente em
+  **Câmera ▸ Estilo** — o efeito é exatamente o mesmo, e o estado do
+  menu permanece sincronizado.
+- **Alternar raio-X**, **Arestas**, **Perfis** e **Arestas de trás**
+  são toggles: cada clique inverte o flag nativo correspondente.
 
 ### Shadows
 - Clique no ícone para **ligar/desligar** sombras.
 - Arraste o slider **Data** → a sombra gira ao longo do ano.
 - Arraste o slider **Hora** → a sombra gira ao longo do dia.
 - Arraste o slider **Int.** → sombra mais clara ou mais escura.
-
-Ao arrastar qualquer slider, as sombras são ligadas automaticamente
-(senão os ajustes não seriam visíveis).
 
 ---
 
@@ -179,9 +232,9 @@ Ao arrastar qualquer slider, as sombras são ligadas automaticamente
 Tudo o que o `plugins.md` recomenda e que ainda **não** está implementado.
 Nenhuma destas melhorias é necessária — as barras funcionam bem sem elas.
 
-1. **`Tool` subclasse** para cada extensão: "Styles…" e "Shadows…" no menu
-   Extensions, com atalhos. Permite que o usuário reabra a barra se ela
-   for fechada.
+1. **`Tool` subclasse** para cada extensão: "Styles…" e "Shadows…" no
+   menu Extensions, com atalhos. Permite que o usuário reabra a barra se
+   ela for fechada.
 
 2. **Persistência em `app.document_data`**: guardar as posições dos
    sliders no `.igz` para que, ao reabrir, tudo esteja como estava.
@@ -190,21 +243,23 @@ Nenhuma destas melhorias é necessária — as barras funcionam bem sem elas.
    com a API. Perde-se o formato "barra horizontal", mas ganha-se
    integração com a bandeja lateral (Janela ▸ Painéis).
 
-4. **Internacionalização** do texto `"Sombras"` na sincronização com a
-   QAction nativa. Se a UI mudar de idioma, a sincronia para — sem
-   quebrar nada.
+4. ~~**Busca robusta de QAction** na barra Styles: usar `objectName` em vez
+   do `text()` visível, para a barra sobreviver a mudanças de idioma da
+   interface.~~ **Feito** — a busca agora resolve a string-fonte em
+   inglês do IngeTrazo via `core.i18n`, então sobrevive a mudanças de
+   idioma.
 
 5. **Botão "Agora"** para resetar data/hora ao momento atual.
 
-6. **Expor `utc_offset`** em um combo (o campo existe em `ShadowSettings`).
+6. **Expor `utc_offset`** em um combo (o campo existe em
+   `ShadowSettings`).
 
 ---
 
 ## Licença
 
 GPL-3.0-or-later — a mesma licença do IngeTrazo.
-Avisos de terceiros ficam em [THIRD-PARTY.md](THIRD-PARTY.md), que também
-preserva o aviso MIT herdado da primeira versão do projeto.
+Avisos de terceiros ficam em [THIRD-PARTY.md](THIRD-PARTY.md).
 
 Ver <https://www.gnu.org/licenses/gpl-3.0.html>.
 
@@ -218,4 +273,26 @@ Este programa é distribuído na esperança de ser útil, mas **sem qualquer
 garantia**; sem mesmo a garantia implícita de **comercialização** ou
 **adequação a um propósito específico**. Veja a GNU General Public License
 para mais detalhes.
+```
 
+---
+
+### Tabela de correspondência (EN ↔ PT-BR)
+
+| Seção | Inglês | Português |
+|---|---|---|
+| Título | Extensions — "Styles" and "Shadows" Toolbars | Extensões — Barras "Styles" e "Shadows" |
+| Arquivos | Files | Arquivos |
+| Barra Styles | "Styles" Toolbar | Barra "Styles" |
+| Botão (origem) | Button (source) | Botão (origem) |
+| Tipo | Type | Tipo |
+| Estilo / toggle | style / toggle | estilo / toggle |
+| Mecanismo | Mechanism | Mecanismo |
+| Compatibilidade | Compatibility | Compatibilidade |
+| Idioma & internacionalização | Language & internationalization | Idioma & internacionalização |
+| Pontos frágeis | Fragile points | Pontos frágeis |
+| Se a API 0.x quebrar | If the 0.x API breaks | Se a API 0.x quebrar |
+| Instalação | Installation | Instalação |
+| Uso | Usage | Uso |
+| Melhorias futuras | Future improvements | Melhorias futuras |
+| Licença | License | Licença |

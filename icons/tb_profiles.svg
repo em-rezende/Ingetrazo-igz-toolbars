@@ -9,10 +9,11 @@ viewBox="0 0 541.86 541.86"
  <defs>
   <style type="text/css">
    <![CDATA[
-    .str0 {stroke:#FEFEFE;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
-    .fil0 {fill:#FEFEFE}
-    .fil1 {fill:#A9ABAE}
-    .fil2 {fill:#727376}
+    .str0 {stroke:#ED3237;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil3 {fill:#00AFEF}
+    .fil2 {fill:#854220}
+    .fil1 {fill:#F37329}
+    .fil0 {fill:#FCC19F}
    ]]>
   </style>
  </defs>
@@ -21,5 +22,6 @@ viewBox="0 0 541.86 541.86"
   <polygon class="fil0 str0" points="67.84,148.97 229.56,339.7 474.02,202.69 303.7,25.39 "/>
   <polygon class="fil1 str0" points="243.82,516.03 89.87,331.1 68.13,148.53 229.56,339.7 "/>
   <polygon class="fil2 str0" points="474.02,202.69 229.56,339.7 243.53,516.47 468.65,383.76 "/>
+  <path class="fil3" d="M474.13 -0.01l-186.28 0c-37.42,0 -67.74,30.32 -67.74,67.74 0,37.42 30.32,67.74 67.74,67.74l0 -0.02 1.74 0 182.8 0 1.74 0 0 0.02c37.42,0 67.74,-30.32 67.74,-67.74 0,-37.42 -30.32,-67.74 -67.74,-67.74zm0.02 110.06c23.38,0 42.32,-18.94 42.32,-42.32 0,-23.38 -18.94,-42.34 -42.32,-42.34 -23.38,0 -42.34,18.96 -42.34,42.34 0,23.38 18.96,42.32 42.34,42.32z"/>
  </g>
 </svg>
