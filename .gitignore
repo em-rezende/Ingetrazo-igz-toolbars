@@ -1,0 +1,28 @@
+# Sistemas operacionais
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Visual Studio / IDEs
+.vs/
+.vscode/*
+!.vscode/settings.json
+bin/
+obj/
+*.user
+*.suo
+*.sln.DotSettings.user
+
+# Arquivos temporarios do AutoCAD
+*.sv$
+*.dwl
+*.dwl2
+*.ac$
+
+# Pasta de trabalho/desenvolvimento local (nao versionada)
+Desenvolvimento/
+
+# Saida de compilacao (instaladores sao distribuidos via GitHub Releases)
+Output/*.exe
+
