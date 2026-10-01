@@ -18,6 +18,9 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 ├── igz_tb_style.py          # barra "Styles"
 ├── igz_tb_shadows.py        # barra "Shadows"
 ├── README.md                # este arquivo
+├── README_ptBR.md           # esta versão em português
+├── LICENSE                  # texto completo da GPL-3.0
+├── THIRD-PARTY.md           # avisos de terceiros
 └── icons/
     ├── tb_backedges.svg
     ├── tb_hiddenline.svg
@@ -200,6 +203,9 @@ Nenhuma destas melhorias é necessária — as barras funcionam bem sem elas.
 ## Licença
 
 GPL-3.0-or-later — a mesma licença do IngeTrazo.
+Avisos de terceiros ficam em [THIRD-PARTY.md](THIRD-PARTY.md), que também
+preserva o aviso MIT herdado da primeira versão do projeto.
+
 Ver <https://www.gnu.org/licenses/gpl-3.0.html>.
 
 Copyright (C) 2026 Ezequiel M. Rezende.

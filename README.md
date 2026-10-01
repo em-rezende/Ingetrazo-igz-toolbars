@@ -18,6 +18,9 @@ inspired by SketchUp: one for **display styles**, one for **shadows**.
 ├── igz_tb_style.py          # "Styles" toolbar
 ├── igz_tb_shadows.py        # "Shadows" toolbar
 ├── README.md                # this file
+├── README_ptBR.md           # Portuguese version
+├── LICENSE                  # full GPL-3.0 text
+├── THIRD-PARTY.md           # third-party notices
 └── icons/
     ├── tb_backedges.svg
     ├── tb_hiddenline.svg
@@ -203,6 +206,9 @@ without them.
 ## License
 
 GPL-3.0-or-later — the same license as IngeTrazo.
+Third-party notices are recorded in [THIRD-PARTY.md](THIRD-PARTY.md), which also
+preserves the MIT notice inherited from the project's first release.
+
 See <https://www.gnu.org/licenses/gpl-3.0.html>.
 
 Copyright (C) 2026 Ezequiel M. Rezende.
