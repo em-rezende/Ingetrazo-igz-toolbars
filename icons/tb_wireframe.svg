@@ -9,17 +9,20 @@ viewBox="0 0 541.86 541.86"
  <defs>
   <style type="text/css">
    <![CDATA[
-    .str0 {stroke:#FEFEFE;stroke-width:20;stroke-linejoin:round;stroke-miterlimit:22.9256}
-    .fil0 {fill:none}
+    .str0 {stroke:#FEFEFE;stroke-width:15;stroke-linejoin:round;stroke-miterlimit:22.9256;stroke-opacity:0.501961}
+    .str1 {stroke:#FEFEFE;stroke-width:15;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil1 {fill:none}
+    .fil0 {fill:#E6E7E8;fill-opacity:0.501961}
    ]]>
   </style>
  </defs>
  <g id="Camada_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
   <g>
-   <path id="path2" class="fil0 str0" d="M96.12 333.1l217.8 -116.62m0 0l-7.73 -183.04m7.73 183.04l152.92 163.74"/>
    <polygon class="fil0 str0" points="303.7,25.39 67.84,148.97 89.87,331.1 243.53,516.47 468.65,383.76 474.02,202.69 "/>
-   <path id="path4" class="fil0 str0" d="M67.84 148.97l161.72 190.73m244.46 -137.01l-244.46 137.01m0 0l13.97 176.77"/>
+   <path id="path2" class="fil1 str1" d="M89.87 331.1l224.05 -114.62m0 0l-7.73 -183.04m7.73 183.04l152.92 163.74"/>
+   <path id="path4" class="fil1 str1" d="M67.84 148.97l161.72 190.73m244.46 -137.01l-244.46 137.01m0 0l13.97 176.77"/>
+   <polygon class="fil1 str1" points="303.7,25.39 67.84,148.97 89.87,331.1 243.53,516.47 468.65,383.76 474.02,202.69 "/>
   </g>
  </g>
 </svg>

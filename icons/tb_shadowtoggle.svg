@@ -9,8 +9,8 @@ viewBox="0 0 541.86 541.86"
  <defs>
   <style type="text/css">
    <![CDATA[
-    .str0 {stroke:#FEFEFE;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
-    .fil0 {fill:#4B4B4D}
+    .str0 {stroke:#FEFEFE;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil0 {fill:#96989A}
     .fil4 {fill:#00AFEF}
     .fil3 {fill:#854220}
     .fil2 {fill:#F37329}
@@ -21,9 +21,11 @@ viewBox="0 0 541.86 541.86"
  <g id="Camada_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
   <polygon class="fil0 str0" points="261.88,441.29 399.75,360.02 402.63,262.64 516.38,391.75 321.53,516.46 "/>
-  <polygon class="fil1 str0" points="25.48,140.78 176.49,318.88 404.76,190.95 245.72,25.39 "/>
-  <polygon class="fil2 str0" points="189.81,483.53 46.05,310.85 25.76,140.37 176.49,318.88 "/>
-  <polygon class="fil3 str0" points="404.76,190.95 176.49,318.88 189.54,483.94 399.75,360.02 "/>
+  <g>
+   <polygon class="fil1 str0" points="25.48,140.78 176.49,318.88 404.76,190.95 245.72,25.39 "/>
+   <polygon class="fil2 str0" points="189.81,483.53 46.05,310.85 25.76,140.37 176.49,318.88 "/>
+   <polygon class="fil3 str0" points="404.76,190.95 176.49,318.88 189.54,483.94 399.75,360.02 "/>
+  </g>
   <path class="fil4" d="M474.13 -0.01l-186.28 0c-37.42,0 -67.74,30.32 -67.74,67.74 0,37.42 30.32,67.74 67.74,67.74l0 -0.02 1.74 0 182.8 0 1.74 0 0 0.02c37.42,0 67.74,-30.32 67.74,-67.74 0,-37.42 -30.32,-67.74 -67.74,-67.74zm0.02 110.06c23.38,0 42.32,-18.94 42.32,-42.32 0,-23.38 -18.94,-42.34 -42.32,-42.34 -23.38,0 -42.34,18.96 -42.34,42.34 0,23.38 18.96,42.32 42.34,42.32z"/>
  </g>
 </svg>

@@ -5,7 +5,7 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 
 - **Autor:** Ezequiel M. Rezende
 - **Data:** 2026-10-01
-- **Versão:** 1.3.0
+- **Versão:** 1.4.0
 - **Licença:** [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html)
   (mesma do IngeTrazo — ver [LICENSE](https://github.com/ingelibre/ingetrazo/blob/main/LICENSE))
 
@@ -22,20 +22,20 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 ├── LICENSE                  # texto completo da GPL-3.0
 ├── THIRD-PARTY.md           # avisos de terceiros
 └── icons/
-    ├── tb_default.svg
-    ├── tb_architectural.svg
-    ├── tb_shaded.svg
-    ├── tb_hiddenline.svg
-    ├── tb_monochrome.svg
-    ├── tb_wireframe.svg
-    ├── tb_xray.svg
-    ├── tb_xraytoggle.svg
-    ├── tb_edges.svg
-    ├── tb_profiles.svg
-    ├── tb_backedges.svg
-    ├── tb_hiddenobjects.svg
-    ├── tb_hiddengeometry.svg
-    └── tb_shadowtoggle.svg
+    ├── tb_default.svg            / tb_default_light.svg
+    ├── tb_architectural.svg      / tb_architectural_light.svg
+    ├── tb_shaded.svg             / tb_shaded_light.svg
+    ├── tb_hiddenline.svg         / tb_hiddenline_light.svg
+    ├── tb_monochrome.svg         / tb_monochrome_light.svg
+    ├── tb_wireframe.svg          / tb_wireframe_light.svg
+    ├── tb_xray.svg               / tb_xray_light.svg
+    ├── tb_xraytoggle.svg         / tb_xraytoggle_light.svg
+    ├── tb_edges.svg              / tb_edges_light.svg
+    ├── tb_profiles.svg           / tb_profiles_light.svg
+    ├── tb_backedges.svg          / tb_backedges_light.svg
+    ├── tb_hiddenobjects.svg      / tb_hiddenobjects_light.svg
+    ├── tb_hiddengeometry.svg     / tb_hiddengeometry_light.svg
+    └── tb_shadowtoggle.svg       / tb_shadowtoggle_light.svg
 ```
 
 ---
@@ -101,6 +101,22 @@ redesenha tudo automaticamente. Nada mais precisa ser tocado.
 
 Arrastar qualquer slider liga as sombras automaticamente (senão os
 ajustes não ficariam visíveis).
+
+---
+
+## Ícones & temas
+
+Cada botão traz **duas variantes de ícone**, para a barra continuar
+legível tanto em interfaces escuras quanto claras:
+
+- `tb_<nome>.svg` — a variante padrão (usada em temas escuros).
+- `tb_<nome>_light.svg` — a variante para tema claro.
+
+Na inicialização, `_load_themed_icon()` inspeciona a cor `QPalette.Window`
+da janela principal. Em uma interface **clara** ela carrega o arquivo
+`_light.svg` quando ele existe e, caso contrário, cai no ícone padrão; em
+uma interface escura usa sempre o padrão. Nenhuma configuração é
+necessária — os ícones seguem o tema do aplicativo automaticamente.
 
 ---
 

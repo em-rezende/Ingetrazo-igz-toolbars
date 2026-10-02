@@ -9,9 +9,9 @@ viewBox="0 0 541.86 541.86"
  <defs>
   <style type="text/css">
    <![CDATA[
-    .str1 {stroke:#FEFEFE;stroke-width:20;stroke-linejoin:round;stroke-miterlimit:22.9256}
-    .str2 {stroke:#FEFEFE;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
-    .str0 {stroke:#FEFEFE;stroke-width:20;stroke-linejoin:round;stroke-miterlimit:22.9256;stroke-dasharray:26.450000 26.450000}
+    .str1 {stroke:#FEFEFE;stroke-width:15;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .str2 {stroke:#FEFEFE;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .str0 {stroke:#FEFEFE;stroke-width:15;stroke-linejoin:round;stroke-miterlimit:22.9256;stroke-dasharray:26.450000 26.450000}
     .fil4 {fill:none}
     .fil0 {fill:#A9ABAE}
     .fil1 {fill:#B1D2E2}
@@ -28,6 +28,8 @@ viewBox="0 0 541.86 541.86"
    <polygon class="fil1" points="67.84,148.97 184.18,285.95 313.92,216.48 360.47,266.33 474.02,202.69 303.7,25.39 "/>
    <polygon class="fil2" points="243.82,516.03 89.87,331.1 68.13,148.53 229.56,339.7 "/>
    <polygon class="fil3" points="474.02,202.69 229.56,339.7 243.53,516.47 468.65,383.76 "/>
+  </g>
+  <g>
    <path id="path2" class="fil4 str0" d="M96.12 333.1l217.8 -116.62m0 0l-7.73 -183.04m7.73 183.04l152.92 163.74"/>
    <polygon class="fil4 str1" points="303.7,25.39 67.84,148.97 89.87,331.1 243.53,516.47 468.65,383.76 474.02,202.69 "/>
    <path class="fil4 str2" d="M68.13 148.53l161.43 191.17 244.46 -137.01m-230.49 313.78l-13.97 -176.77"/>

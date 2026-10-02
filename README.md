@@ -5,7 +5,7 @@ inspired by SketchUp: one for **display styles**, one for **shadows**.
 
 - **Author:** Ezequiel M. Rezende
 - **Date:** 2026-10-01
-- **Version:** 1.3.0
+- **Version:** 1.4.0
 - **License:** [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html)
   (same as IngeTrazo — see [LICENSE](https://github.com/ingelibre/ingetrazo/blob/main/LICENSE))
 
@@ -22,20 +22,20 @@ inspired by SketchUp: one for **display styles**, one for **shadows**.
 ├── LICENSE                  # full GPL-3.0 text
 ├── THIRD-PARTY.md           # third-party notices
 └── icons/
-    ├── tb_default.svg
-    ├── tb_architectural.svg
-    ├── tb_shaded.svg
-    ├── tb_hiddenline.svg
-    ├── tb_monochrome.svg
-    ├── tb_wireframe.svg
-    ├── tb_xray.svg
-    ├── tb_xraytoggle.svg
-    ├── tb_edges.svg
-    ├── tb_profiles.svg
-    ├── tb_backedges.svg
-    ├── tb_hiddenobjects.svg
-    ├── tb_hiddengeometry.svg
-    └── tb_shadowtoggle.svg
+    ├── tb_default.svg            / tb_default_light.svg
+    ├── tb_architectural.svg      / tb_architectural_light.svg
+    ├── tb_shaded.svg             / tb_shaded_light.svg
+    ├── tb_hiddenline.svg         / tb_hiddenline_light.svg
+    ├── tb_monochrome.svg         / tb_monochrome_light.svg
+    ├── tb_wireframe.svg          / tb_wireframe_light.svg
+    ├── tb_xray.svg               / tb_xray_light.svg
+    ├── tb_xraytoggle.svg         / tb_xraytoggle_light.svg
+    ├── tb_edges.svg              / tb_edges_light.svg
+    ├── tb_profiles.svg           / tb_profiles_light.svg
+    ├── tb_backedges.svg          / tb_backedges_light.svg
+    ├── tb_hiddenobjects.svg      / tb_hiddenobjects_light.svg
+    ├── tb_hiddengeometry.svg     / tb_hiddengeometry_light.svg
+    └── tb_shadowtoggle.svg       / tb_shadowtoggle_light.svg
 ```
 
 ---
@@ -100,6 +100,22 @@ redraws everything automatically. Nothing else needs to be touched.
 
 Dragging any slider automatically turns shadows on (otherwise the
 adjustments would not be visible).
+
+---
+
+## Icons & themes
+
+Each button ships **two icon variants**, so the toolbar stays legible on
+both dark and light interfaces:
+
+- `tb_<name>.svg` — the default variant (used on dark themes).
+- `tb_<name>_light.svg` — the light-theme variant.
+
+At start-up, `_load_themed_icon()` inspects the `QPalette.Window` colour
+of the main window. On a **light** UI it loads the `_light.svg` file when
+it exists and otherwise falls back to the default icon; on a dark UI it
+always uses the default one. No configuration is required — the icons
+follow the application theme automatically.
 
 ---
 

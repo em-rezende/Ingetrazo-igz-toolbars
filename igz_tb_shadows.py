@@ -1,7 +1,22 @@
 # =========================================================================
-# Extension: igz_tb_shadows
+# Copyright (C) 2026 IngeTrazo Contributors / Ezequiel M. Rezende
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# =========================================================================
+# Extension: igz_tb_shadows (Com suporte a ícones temáticos)
 # Author: Ezequiel M. Rezende
-# Version: 1.1.0
+# Version: 1.2.0
 # Date: 2026-10-01
 # License: GPL-3.0-or-later (same as IngeTrazo)
 #
@@ -36,7 +51,7 @@ import sys
 import traceback
 
 from PySide6.QtCore import Qt, QDate, QTimer
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtGui import QAction, QIcon, QPalette
 from PySide6.QtWidgets import (
     QToolBar, QMessageBox, QSlider, QLabel, QWidget, QHBoxLayout, QSizePolicy
 )
@@ -49,10 +64,6 @@ def _log(msg: str) -> None:
 
 
 # --- Internationalization --------------------------------------------------
-# IngeTrazo's JSON i18n (core/i18n.py): English is the source language and
-# tr() looks a string up in the active catalog.
-# older IngeTrazo without core.i18n: each name falls back on its own, so a
-# missing helper never disables the ones that do exist.
 try:
     from core.i18n import tr as _it_tr
 except Exception:
@@ -86,8 +97,6 @@ _LOCAL_MONTHS = {
               "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
 }
 
-# Our own strings live only in this plugin, so IngeTrazo's catalog does not
-# carry them; translate them here (English — the source — needs no entry).
 _LOCAL = {
     "es": {
         "Date": "Fecha",
@@ -125,7 +134,6 @@ _LOCAL = {
 
 
 def _t(text: str) -> str:
-    """`text` (an English source string) in the active IngeTrazo language."""
     out = _it_tr(text)
     if out != text:
         return out
@@ -141,7 +149,6 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def _find_icons_folder():
-    """Icons live in `<plugins>/icons/`, next to this file."""
     c = os.path.join(_HERE, "icons")
     return c if os.path.isdir(c) else None
 
@@ -151,10 +158,6 @@ _log(f"icons folder: {_ICONS_DIR}")
 
 # --- MainWindow discovery --------------------------------------------------
 def _discover_main_window():
-    """
-    Discovery via QApplication.topLevelWidgets().
-    Same strategy as igz_tb_style.py — see the comment there.
-    """
     try:
         from PySide6.QtWidgets import QApplication
         qapp = QApplication.instance()
@@ -171,17 +174,38 @@ def _discover_main_window():
     return None
 
 
+# --- Themed icon helper ----------------------------------------------------
+def _load_themed_icon(base_name: str, main_window) -> QIcon:
+    """
+    Verifica se o tema da interface é claro ou escuro através da paleta
+    e carrega o ícone correspondente (_light.svg para temas claros).
+    """
+    if not _ICONS_DIR:
+        return QIcon()
+
+    is_dark = True
+    try:
+        if main_window is not None:
+            palette = main_window.palette()
+            bg_color = palette.color(QPalette.Window)
+            is_dark = bg_color.lightness() < 128
+    except Exception:
+        pass
+
+    if not is_dark:
+        light_path = os.path.join(_ICONS_DIR, f"{base_name}_light.svg")
+        if os.path.isfile(light_path):
+            return QIcon(light_path)
+
+    default_path = os.path.join(_ICONS_DIR, f"{base_name}.svg")
+    if os.path.isfile(default_path):
+        return QIcon(default_path)
+
+    return QIcon()
+
+
 # --- Access to the scene and the viewport ----------------------------------
 def _get_scene_shadows(main_window):
-    """
-    The scene lives at `main_window.viewport.scene` — MainWindow does NOT
-    have a `.scene` attribute.
-
-    ⚠️ FRAGILE: uses the chain `viewport.scene.shadows`, which is how
-    IngeTrazo 0.x stores the sun settings. It is not in the public
-    extension API. If it moves in a future version, it is enough to
-    adjust this single helper — everything else uses it.
-    """
     vp = getattr(main_window, "viewport", None)
     if vp is None:
         return None
@@ -192,20 +216,12 @@ def _get_scene_shadows(main_window):
 
 
 def _repaint(main_window) -> None:
-    """
-    Requests a viewport repaint. IngeTrazo's paintGL reads
-    `scene.shadows` on every frame and redraws the sun by itself.
-    """
     vp = getattr(main_window, "viewport", None)
     if vp is not None and hasattr(vp, "update"):
         vp.update()
 
 
 # --- Actions (only change scene.shadows + repaint) ------------------------
-# ⚠️ FRAGILE: the field names (`enabled`, `month`, `day`, `hour`,
-# `minute`, `darkness`) are those of the `core.sun.ShadowSettings`
-# dataclass. If the dataclass changes, the attributes must follow.
-
 def _toggle_shadows(main_window, checked: bool) -> None:
     sh = _get_scene_shadows(main_window)
     if sh is None:
@@ -255,10 +271,7 @@ def _minutes_to_text(minutes: int) -> str:
 
 
 # --- Finds the native "Shadows" QAction ------------------------------------
-# Our own actions (kept in _LABELED_ACTIONS) are skipped so the toggle can
-# never sync with itself.
 def _find_action(main_window, english: str):
-    """The native QAction labelled `english`, in whatever UI language."""
     own = {id(a) for a, _ in _LABELED_ACTIONS}
     roots = []
     menubar = getattr(main_window, "menuBar", None)
@@ -279,8 +292,8 @@ def _find_action(main_window, english: str):
 
 
 # --- Widgets ---------------------------------------------------------------
-_LABEL_WIDGETS: list = []        # [(QLabel, english key), ...] — captions
-_REFRESH_HOOKS: list = []        # callables re-rendered on a language change
+_LABEL_WIDGETS: list = []
+_REFRESH_HOOKS: list = []
 
 
 def _make_date_slider(main_window) -> QWidget:
@@ -383,14 +396,13 @@ def _make_intensity_slider(main_window) -> QWidget:
 
 
 # --- Following the app language --------------------------------------------
-_LABELED_ACTIONS: list = []      # [(QAction, english source), ...]
-_TOOLBARS: list = []             # [QToolBar, ...]
+_LABELED_ACTIONS: list = []
+_TOOLBARS: list = []
 _LAST_LANG = None
 _LANG_TIMER = None
 
 
 def _retranslate() -> None:
-    """Re-apply the active language to every label this plugin owns."""
     title = _t("Shadows")
     for tb in _TOOLBARS:
         tb.setWindowTitle(title)
@@ -400,7 +412,7 @@ def _retranslate() -> None:
         action.setStatusTip(_t("Toggle shadows on/off"))
     for widget, key in _LABEL_WIDGETS:
         widget.setText(_t(key))
-    for hook in _REFRESH_HOOKS:      # month abbreviations in the Date label
+    for hook in _REFRESH_HOOKS:
         hook()
 
 
@@ -414,12 +426,6 @@ def _poll_language() -> None:
 
 
 def _install_language_watcher() -> None:
-    """Follow Window ▸ Language.
-
-    IngeTrazo applies a new language on the next start, but it also swaps
-    the active catalog at once; this cheap timer keeps our toolbar in step
-    without touching the rest of the UI.
-    """
     global _LANG_TIMER, _LAST_LANG
     if _LANG_TIMER is not None:
         return
@@ -428,20 +434,13 @@ def _install_language_watcher() -> None:
     timer.setInterval(1000)
     timer.timeout.connect(_poll_language)
     timer.start()
-    _LANG_TIMER = timer      # module-level ref keeps the QTimer alive
+    _LANG_TIMER = timer
 
 
 # --- Toolbar creation ------------------------------------------------------
 _TOOLBAR_CREATED = False
 
 def _create_shadows_toolbar(main_window) -> None:
-    """
-    Creates the "Shadows" toolbar.
-
-    ⚠️ FRAGILE: same case as igz_tb_style — QToolBar via PySide.
-    Note: the toggle button SYNCS with the native "Shadows" action of the
-    IngeTrazo menu, so the two never get out of phase.
-    """
     global _TOOLBAR_CREATED
     if _TOOLBAR_CREATED:
         _log("toolbar already created")
@@ -457,14 +456,8 @@ def _create_shadows_toolbar(main_window) -> None:
         main_window.addToolBar(Qt.TopToolBarArea, tb)
         _TOOLBARS.append(tb)
 
-        # Toggle button
-        icon = QIcon()
-        if _ICONS_DIR:
-            p = os.path.join(_ICONS_DIR, "tb_shadowtoggle.svg")
-            if os.path.isfile(p):
-                icon = QIcon(p)
-            else:
-                _log(f"icon not found: {p}")
+        # Toggle button com suporte a ícones temáticos
+        icon = _load_themed_icon("tb_shadowtoggle", main_window)
 
         act = QAction(icon, _t("Shadows"), main_window)
         act.setToolTip(_t("Toggle shadows on/off"))
@@ -478,10 +471,6 @@ def _create_shadows_toolbar(main_window) -> None:
 
         def _on_toggle(checked):
             _toggle_shadows(main_window, checked)
-            # ⚠️ FRAGILE: mirrors the native "Shadows" action (found by its
-            # English source, so it works in any language). If IngeTrazo
-            # renames the source string, this sync stops working — but the
-            # toolbar keeps operating normally.
             try:
                 native = _find_action(main_window, "Shadows")
                 if native is not None and native.isCheckable() and native is not act:
@@ -501,7 +490,6 @@ def _create_shadows_toolbar(main_window) -> None:
         tb.addSeparator()
         tb.addWidget(_make_intensity_slider(main_window))
 
-        # Make the docked toolbar respect the content size
         tb.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         tb.setMaximumWidth(tb.sizeHint().width())
 
@@ -514,10 +502,6 @@ def _create_shadows_toolbar(main_window) -> None:
 
 # --- setup() ---------------------------------------------------------------
 def setup(app):
-    """
-    Entry point called ONCE by IngeTrazo.
-    See the equivalent comment in igz_tb_style.py.
-    """
     print(f"[igz_tb_shadows] setup(app) — PID={os.getpid()}",
           file=sys.stderr, flush=True)
     _log(f"app: {type(app).__module__}.{type(app).__name__}")
@@ -537,4 +521,3 @@ def setup(app):
         _create_shadows_toolbar(mw)
     except Exception:
         traceback.print_exc()
-

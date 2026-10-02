@@ -9,23 +9,22 @@ viewBox="0 0 541.86 541.86"
  <defs>
   <style type="text/css">
    <![CDATA[
-    .str0 {stroke:#FEFEFE;stroke-width:15;stroke-linejoin:round;stroke-miterlimit:22.9256}
-    .str1 {stroke:#FEFEFE;stroke-width:15;stroke-linejoin:round;stroke-miterlimit:22.9256;stroke-dasharray:15.000000 15.000000}
+    .str0 {stroke:#373435;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .str1 {stroke:#373435;stroke-width:15;stroke-linejoin:round;stroke-miterlimit:22.9256;stroke-dasharray:26.450000 26.450000}
     .fil3 {fill:none}
+    .fil0 {fill:#D2D3D5}
+    .fil1 {fill:#96989A}
+    .fil2 {fill:#606062}
     .fil4 {fill:#00AFEF}
-    .fil0 {fill:#854220}
-    .fil2 {fill:#F37329}
-    .fil1 {fill:#FCC19F}
    ]]>
   </style>
  </defs>
  <g id="Camada_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <polygon class="fil0" points="89.87,331.1 243.47,515.59 468.65,383.76 313.92,216.48 "/>
-  <polygon class="fil1" points="303.7,25.39 67.84,148.97 89.87,331.1 313.92,216.48 "/>
-  <polygon class="fil2" points="468.65,383.76 474.02,202.69 303.7,25.39 313.92,216.48 "/>
-  <polygon class="fil3 str0" points="303.7,25.39 67.84,148.97 89.87,331.1 243.53,516.47 468.65,383.76 474.02,202.69 "/>
-  <path class="fil3 str1" d="M68.1 149.66l161.32 190.25 13.91 175.89m230.54 -312.89l-244.45 137"/>
+  <polygon class="fil0 str0" points="67.84,148.97 229.56,339.7 474.02,202.69 303.7,25.39 "/>
+  <polygon class="fil1 str0" points="243.82,516.03 89.87,331.1 68.13,148.53 229.56,339.7 "/>
+  <polygon class="fil2 str0" points="474.02,202.69 229.56,339.7 243.53,516.47 468.65,383.76 "/>
+  <path id="path2" class="fil3 str1" d="M96.12 333.1l217.8 -116.62m0 0l-7.73 -183.04m7.73 183.04l152.92 163.74"/>
   <path class="fil4" d="M474.13 -0.01l-186.28 0c-37.42,0 -67.74,30.32 -67.74,67.74 0,37.42 30.32,67.74 67.74,67.74l0 -0.02 1.74 0 182.8 0 1.74 0 0 0.02c37.42,0 67.74,-30.32 67.74,-67.74 0,-37.42 -30.32,-67.74 -67.74,-67.74zm0.02 110.06c23.38,0 42.32,-18.94 42.32,-42.32 0,-23.38 -18.94,-42.34 -42.32,-42.34 -23.38,0 -42.34,18.96 -42.34,42.34 0,23.38 18.96,42.32 42.34,42.32z"/>
  </g>
 </svg>
