@@ -53,21 +53,21 @@ mesmas chaves que o menu nativo passa para `tr()`. Os botões aparecem
 traduzidos para o idioma em que o IngeTrazo estiver (ver *Idioma*
 abaixo), e cada botão mostra o mesmo texto do item de menu nativo.
 
-| Botão (origem)      | Tipo   |
-|---------------------|--------|
-| **Default**         | estilo |
-| **Architectural**   | estilo |
-| **Shaded**          | estilo |
-| **Hidden line**     | estilo |
-| **Monochrome**      | estilo |
-| **Wireframe**       | estilo |
-| **X-ray**           | estilo |
-| **Toggle X-ray**    | toggle |
-| **Edges**           | toggle |
-| **Profiles**        | toggle |
-| **Back edges**      | toggle |
-| **Hidden Objects**  | toggle |
-| **Hidden Geometry** | toggle |
+| Botão (origem)      | Tipo   | Icone |
+|---------------------|--------|----|
+| **Default**         | style  | ![Default](icons/tb_default.svg) |
+| **Architectural**   | style  | ![Architectural](icons/tb_architectural.svg) |
+| **Shaded**          | style  | ![Shaded](icons/tb_shaded.svg) |
+| **Hidden line**     | style  | ![Hidden line](icons/tb_hiddenline.svg) |
+| **Monochrome**      | style  | ![Monochrome](icons/tb_monochrome.svg) |
+| **Wireframe**       | style  | ![Wireframe](icons/tb_wireframe.svg) |
+| **X-ray**           | style  | ![X-ray](icons/tb_xray.svg) |
+| **Toggle X-ray**    | toggle | ![Toggle X-ray](icons/tb_xraytoggle.svg) |
+| **Edges**           | toggle | ![Edges](icons/tb_edges.svg) |
+| **Profiles**        | toggle | ![Profiles](icons/tb_profiles.svg) |
+| **Back edges**      | toggle | ![Back edges](icons/tb_backedges.svg) |
+| **Hidden Objects**  | toggle | ![Hidden Objects](icons/tb_hiddenobjects.svg) |
+| **Hidden Geometry** | toggle | ![Hidden Geometry](icons/tb_hiddengeometry.svg) |
 
 **Mecanismo:** para cada botão, `_trigger_action()` procura na janela
 principal a `QAction` nativa cujo rótulo é aquela string-fonte em inglês
