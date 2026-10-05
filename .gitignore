@@ -26,3 +26,6 @@ Desenvolvimento/
 # Saida de compilacao (instaladores sao distribuidos via GitHub Releases)
 Output/*.exe
 
+# Artefato da extensao para o catalogo do IngeTrazo (enviado via GitHub Releases)
+dist/
+

@@ -224,6 +224,16 @@ em `_LOCAL` (e, para as abreviações de mês, `_LOCAL_MONTHS`) no topo de
 
 As barras **Styles** e **Shadows** aparecem na área superior.
 
+### A partir do catálogo de extensões do IngeTrazo
+
+A extensão também está empacotada para o catálogo da comunidade em
+<https://ingetrazo.com/extensiones> (repositório
+<https://github.com/ingelibre/ingetrazo-extensions>), que instala um único
+`.zip` contendo uma pasta com um `__init__.py`. Gere esse arquivo com
+`packaging/build_extension.ps1` (Windows) ou `packaging/build_extension.py`
+(qualquer sistema); ele sai em `dist/igz_toolbars.zip`. Veja
+[`PUBLISHING.md`](PUBLISHING.md) para os passos de release e submissão.
+
 ---
 
 ## Uso

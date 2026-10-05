@@ -224,6 +224,16 @@ plugin's own few strings into a new language, add its code to `_LOCAL`
 
 The **Styles** and **Shadows** toolbars appear in the top area.
 
+### From the IngeTrazo extension catalog
+
+The extension is also packaged for the community catalog at
+<https://ingetrazo.com/extensiones> (repository
+<https://github.com/ingelibre/ingetrazo-extensions>), which installs a single
+`.zip` holding one folder with an `__init__.py`. Build that archive with
+`packaging/build_extension.ps1` (Windows) or `packaging/build_extension.py`
+(any platform); it lands in `dist/igz_toolbars.zip`. See
+[`PUBLISHING.md`](PUBLISHING.md) for the release and submission steps.
+
 ---
 
 ## Usage

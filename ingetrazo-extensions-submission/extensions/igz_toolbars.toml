@@ -1,0 +1,31 @@
+# Entry for the IngeTrazo extension catalog
+# (https://github.com/ingelibre/ingetrazo-extensions).
+#
+# Copy this file to that repository as `extensions/igz_toolbars.toml` and open
+# a pull request. The `sha256` below is the fingerprint of the exact archive
+# built by `packaging/build_extension.ps1` / `packaging/build_extension.py`
+# and uploaded as the `v1.4.0` GitHub Release asset named `igz_toolbars.zip`.
+# If you rebuild the archive, replace `sha256` with the new value the build
+# script prints (or let the automatic check tell you the right one).
+
+id = "igz_toolbars"
+version = "1.4.0"
+author = "Ezequiel M. Rezende"
+author_url = "https://github.com/em-rezende"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/em-rezende/Ingetrazo-igz-toolbars"
+download = "https://github.com/em-rezende/Ingetrazo-igz-toolbars/releases/download/v1.4.0/igz_toolbars.zip"
+sha256 = "b495e6c05d5a9010bf4e32201e9409ededa4d183c09704a83f23af5fc734b4b8"
+ingetrazo = "0.5.7"
+tags = ["rendering", "drawing", "productivity"]
+screenshot = "igz_toolbars.png"
+
+[name]
+es = "Barras de estilos y sombras"
+en = "Styles and Shadows toolbars"
+pt = "Barras de estilos e sombras"
+
+[summary]
+es = "Dos barras inspiradas en SketchUp: la de estilos replica el menú Cámara ▸ Estilo con 13 botones, y la de sombras añade un interruptor y deslizadores de fecha, hora e intensidad."
+en = "Two SketchUp-inspired toolbars: the Styles one mirrors the Camera ▸ Style menu with 13 buttons, and the Shadows one adds a toggle plus date, time and intensity sliders."
+pt = "Duas barras inspiradas no SketchUp: a de estilos espelha o menu Câmera ▸ Estilo com 13 botões, e a de sombras traz um botão e sliders de data, hora e intensidade."
