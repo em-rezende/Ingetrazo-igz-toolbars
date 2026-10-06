@@ -17,7 +17,7 @@
 # =========================================================================
 # Extension: igz_toolbars — package entry point
 # Author: Ezequiel M. Rezende
-# Version: 1.4.0
+# Version: 1.5.0
 # Date: 2026-10-01
 # License: GPL-3.0-or-later (same as IngeTrazo)
 #

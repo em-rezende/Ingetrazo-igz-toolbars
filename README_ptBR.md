@@ -5,7 +5,7 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 
 - **Autor:** Ezequiel M. Rezende
 - **Data:** 2026-10-01
-- **Versão:** 1.4.0
+- **Versão:** 1.5.0
 - **Licença:** [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html)
   (mesma do IngeTrazo — ver [LICENSE](https://github.com/ingelibre/ingetrazo/blob/main/LICENSE))
 

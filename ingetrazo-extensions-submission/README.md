@@ -1,8 +1,8 @@
 # Submission bundle — IngeTrazo extension catalog
 
-> **Not published yet.** Nothing here has been sent anywhere; these are the
-> files to copy into a pull request of
-> <https://github.com/ingelibre/ingetrazo-extensions> once you authorise it.
+> **Update bundle for the IngeTrazo extension catalog.** v1.4.0 is already
+> published; these are the files to copy into a pull request of
+> <https://github.com/ingelibre/ingetrazo-extensions> to publish the update.
 
 Copy these two things into the catalog repository:
 
@@ -17,11 +17,11 @@ in the template checklist.
 
 ## Before you submit
 
-- The `download` URL points at the **v1.4.0** GitHub Release asset
+- The `download` URL points at the **v1.5.0** GitHub Release asset
   `igz_toolbars.zip`, so create that tag/release in this repository first and
   upload `dist/igz_toolbars.zip` as the asset with that exact name.
 - The `sha256` in the entry must match that asset byte-for-byte:
-  `b495e6c05d5a9010bf4e32201e9409ededa4d183c09704a83f23af5fc734b4b8`.
+  `854d0874dc68b04908e8b74f5d581574560dfb962bf645bf3a1624a1427904d4`.
   Rebuild with `packaging/build_extension.ps1` (or
   `packaging/build_extension.py`) if the code changed, and paste the value it
   prints. (If it is wrong, the catalog's automatic check tells you the right

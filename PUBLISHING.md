@@ -1,8 +1,8 @@
 # Publicar no catálogo de Extensões do IngeTrazo
 
-> **Status: PREPARADO, AINDA NÃO PUBLICADO.**
-> Nada foi enviado para nenhum repositório. Este guia só descreve os passos;
-> execute-os quando você autorizar.
+> **Status: v1.4.0 já publicada no catálogo.**
+> Este guia descreve os passos da publicação inicial e, na prática, como
+> publicar cada atualização (ex.: a v1.5.0).
 
 Este documento (PT) e a seção em inglês mais abaixo descrevem como publicar
 esta extensão no catálogo <https://github.com/ingelibre/ingetrazo-extensions>
@@ -14,10 +14,10 @@ esta extensão no catálogo <https://github.com/ingelibre/ingetrazo-extensions>
 
 | Item | Onde | Observação |
 |---|---|---|
-| Código limpo | `igz_tb_style.py`, `igz_tb_shadows.py` | Artefatos de citação (`[cite: 3]`) removidos; versões alinhadas em **1.4.0**. |
+| Código limpo | `igz_tb_style.py`, `igz_tb_shadows.py` | Artefatos de citação (`[cite: 3]`) removidos; versões alinhadas em **1.5.0**. |
 | Empacotador | `packaging/build_extension.ps1` (Windows) e `packaging/build_extension.py` (multi-plataforma) | Gera um `.zip` determinístico com **uma** pasta de topo `igz_toolbars/`. |
 | Ponto de entrada do pacote | `packaging/igz_toolbars/__init__.py` | Define `setup(app)` e carrega os dois módulos por caminho de arquivo. |
-| Artefato | `dist/igz_toolbars.zip` | Já construído. **sha256** = `b495e6c05d5a9010bf4e32201e9409ededa4d183c09704a83f23af5fc734b4b8`. |
+| Artefato | `dist/igz_toolbars.zip` | Já construído. **sha256** = `854d0874dc68b04908e8b74f5d581574560dfb962bf645bf3a1624a1427904d4`. |
 | Ficha do catálogo | `ingetrazo-extensions-submission/extensions/igz_toolbars.toml` | Copiar para `extensions/igz_toolbars.toml` no repositório do catálogo. |
 | Captura de tela | `ingetrazo-extensions-submission/screenshots/igz_toolbars.png` | Copiar para `screenshots/igz_toolbars.png` no repositório do catálogo. |
 
@@ -50,7 +50,7 @@ Pré-requisitos atendidos: repositório público, licença livre
 1. **Confirme as alterações locais e faça o commit.**
    ```powershell
    git add -A
-   git commit -m "chore: prepare 1.4.0 for the IngeTrazo extension catalog"
+   git commit -m "chore: prepare 1.5.0 for the IngeTrazo extension catalog"
    ```
    (Revise `git status` antes: há ícones `_light.svg`, `screenshots/`,
    `packaging/` e `ingetrazo-extensions-submission/` ainda não rastreados.)
@@ -62,18 +62,18 @@ Pré-requisitos atendidos: repositório público, licença livre
    Anote o `sha256` impresso e atualize-o em
    `ingetrazo-extensions-submission/extensions/igz_toolbars.toml`.
 
-3. **Envie o código para o GitHub e crie a etiqueta `v1.4.0`.**
+3. **Envie o código para o GitHub e crie a etiqueta `v1.5.0`.**
    ```powershell
    git push origin main
-   git tag v1.4.0
-   git push origin v1.4.0
+   git tag v1.5.0
+   git push origin v1.5.0
    ```
 
-4. **Crie a Release `v1.4.0`** em
+4. **Crie a Release `v1.5.0`** em
    <https://github.com/em-rezende/Ingetrazo-igz-toolbars/releases/new> e
    **anexe `dist/igz_toolbars.zip` como asset** (nome exatamente
    `igz_toolbars.zip`). O endereço de download na ficha aponta para:
-   `.../releases/download/v1.4.0/igz_toolbars.zip`.
+   `.../releases/download/v1.5.0/igz_toolbars.zip`.
 
 5. **Abra o pull request no repositório do catálogo** (sem Git, pelo
    navegador):
@@ -87,7 +87,7 @@ Pré-requisitos atendidos: repositório público, licença livre
 
 6. **Responda o checklist** do template do PR:
    - [x] Um arquivo `extensions/igz_toolbars.toml`, copiado de `TEMPLATE.toml`.
-   - [x] `download` aponta para uma **tag** (`v1.4.0`), não para uma branch.
+   - [x] `download` aponta para uma **tag** (`v1.5.0`), não para uma branch.
    - [x] Testado com a versão do IngeTrazo em `ingetrazo` (**0.5.7**).
    - [x] A licença em `license` é a do código (GPL-3.0-or-later).
    - [x] `reviewed.toml` **não** foi tocado (só mantenedores).
@@ -121,16 +121,17 @@ página do catálogo se atualiza sozinha. A extensão aparece como
 
 # Publishing to the IngeTrazo extension catalog (EN)
 
-> **Status: PREPARED, NOT YET PUBLISHED.** Nothing has been pushed anywhere.
+> **Status: v1.4.0 already published.** This guide also covers publishing
+> each update (e.g. v1.5.0).
 
 Everything needed is in place (clean code, a `.zip` builder, the entry file
 and a screenshot). To publish, once you authorise it:
 
-1. Commit locally (`git add -A; git commit -m "chore: prepare 1.4.0 ..."`).
+1. Commit locally (`git add -A; git commit -m "chore: prepare 1.5.0 ..."`).
 2. (Only if the code changed) rebuild: `packaging\build_extension.ps1` and
    copy the printed `sha256` into the entry.
-3. `git push origin main`, then `git tag v1.4.0` and `git push origin v1.4.0`.
-4. Create the **v1.4.0** GitHub Release and attach `dist/igz_toolbars.zip`
+3. `git push origin main`, then `git tag v1.5.0` and `git push origin v1.5.0`.
+4. Create the **v1.5.0** GitHub Release and attach `dist/igz_toolbars.zip`
    as an asset named exactly `igz_toolbars.zip`.
 5. In <https://github.com/ingelibre/ingetrazo-extensions>, copy
    `ingetrazo-extensions-submission/extensions/igz_toolbars.toml` to
@@ -142,6 +143,6 @@ and a screenshot). To publish, once you authorise it:
    uses no network, runs no external programs and deletes no files).
 
 The **sha256** in the entry
-(`b495e6c05d5a9010bf4e32201e9409ededa4d183c09704a83f23af5fc734b4b8`) is the
+(`854d0874dc68b04908e8b74f5d581574560dfb962bf645bf3a1624a1427904d4`) is the
 fingerprint of `dist/igz_toolbars.zip` as built by the script. It **must**
 match the uploaded asset; if you rebuild, update the value.
