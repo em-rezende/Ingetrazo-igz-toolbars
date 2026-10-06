@@ -11,6 +11,13 @@ inspired by SketchUp: one for **display styles**, one for **shadows**.
 
 ---
 
+![IngeTrazo with the "Styles" and "Shadows" toolbars on screen](screenshots/igz-toolbars-main.png)
+
+*The **Styles** toolbar (thirteen style buttons) and the **Shadows**
+toolbar (date, time, calendar, intensity, map source and location).*
+
+---
+
 ## Files
 
 ```
@@ -84,14 +91,41 @@ menu never fall out of sync.
 
 ## "Shadows" Toolbar
 
-Three sliders plus a toggle, following the SketchUp model.
+A toggle, two colour-coded sliders, a calendar button, an intensity
+slider and a row of source/location controls, following the SketchUp model.
 
-| Control | Field affected                      | Range |
-|---------|-------------------------------------|-------|
-| **Toggle** (icon) | `scene.shadows.enabled`     | on/off |
-| **Date** | `scene.shadows.month` + `.day`      | 1–365 (day of year) |
-| **Time** | `scene.shadows.hour` + `.minute`    | 0–1439 min |
-| **Int.** | `scene.shadows.darkness`            | 0.0–1.0 |
+| Control | Field affected | Range |
+|---------|----------------|-------|
+| **Toggle** (icon) | `scene.shadows.enabled` | on/off |
+| **Date** slider | `scene.shadows.month` + `.day` | 1–365 (day of year) |
+| **Time** slider | `scene.shadows.hour` + `.minute` | 0–1439 min |
+| **Calendar** (icon) | `scene.shadows.month`/`.day`/`.hour`/`.minute` | date + time dialog |
+| **Int.** slider | `scene.shadows.darkness` | 0–100 (→ 0.0–1.0) |
+| **Source** combo | Terreno panel map source | Esri / Sentinel-2 / OSM |
+| **Location** row | `scene.shadows.latitude` + `.longitude` | coords + map picker |
+
+Notes on the controls:
+
+- **Date slider** — painted with a **seasonal gradient** (southern
+  hemisphere: red summer → yellow winter) and showing the month initials
+  (*J F M A M J J A S O N D*) underneath.
+- **Time slider** — painted with a **day/night gradient** (dark-blue
+  night → light day → dark-blue night) and showing the day's
+  **sunrise**, **Noon** and **sunset** underneath.
+- **Calendar button** — opens a dialog with a `QCalendarWidget` and a
+  `QTimeEdit` to enter an exact date and time.
+- **Source / Location / Load map** — integrate with IngeTrazo's
+  **Terreno** (BaseMap) panel: choose the tile source, then type the
+  project coordinates or use the map-picker button, which runs the
+  panel's native *Search location* command. *Load map* keeps the fetched
+  tiles; when it is off, the tiles are discarded once the coordinates are
+  applied.
+
+The **sunrise** and **sunset** marks are computed by an **internal solar
+algorithm with no external dependencies** (*Almanac for Computers* /
+USNO, ±2 min typical) from the scene's `latitude`, `longitude` and
+`utc_offset` — so they update when the date or the location changes
+(never when only the time slider moves).
 
 **Mechanism:** change the fields on `scene.shadows` and call
 `viewport.update()`. IngeTrazo's `paintGL` **re-reads `scene.shadows` every
@@ -142,9 +176,10 @@ marked with `⚠️ FRAGILE` in the source code. Consolidated list:
 | Symbol | Where | Why |
 |---|---|---|
 | `viewport.scene.shadows` | `_get_scene_shadows` | Internal chain; the scene is not on `app.scene` |
-| `ShadowSettings.{enabled, month, day, hour, minute, darkness}` | various | Internal dataclass (`core.sun`) |
+| `ShadowSettings.{enabled, month, day, hour, minute, darkness, latitude, longitude, utc_offset}` | various | Internal dataclass (`core.sun`) |
+| `BaseMapPanel` internals (`_source`, `_find`, `_lat`, `_lon`, `_last_sid`) | `_find_base_map_panel` / `_open_native_georef_dialog` | Reached through `findChildren`; the **Terreno** panel is not a public API |
+| `scene.{tile_layer, terrain, photo_mesh}` snapshot | `_open_native_georef_dialog` | Internal scene attributes, restored when *Load map* is off |
 | `QToolBar` + `MainWindow.addToolBar(...)` | `_create_shadows_toolbar` | Same as above |
-| Native `"Shadows"` action lookup | `_on_toggle` | Found by English source via `core.i18n`; only breaks if IngeTrazo renames it |
 
 ### What **is** compliant with `plugins.md`
 
@@ -195,10 +230,13 @@ IngeTrazo's UI is translated with a lightweight JSON catalog
   from IngeTrazo's own catalog through `tr()`, so they always match what
   the **Camera ▸ Style** menu shows.
 - **Our own strings** (toolbar titles, the `Date`/`Time`/`Int.` slider
-  labels, the toggle tooltip and the error dialog) are not in IngeTrazo's
+  labels, `Location`, `Select Location`, `Calendar`, `Source`, `Load map`,
+  `Noon`, the toggle tooltip and the error dialog) are not in IngeTrazo's
   catalog, so the plugin carries a small table for English, Spanish,
   Indonesian, Italian and Brazilian Portuguese; anything else falls back
-  to English.
+  to English. The month abbreviations and the month initials under the
+  date slider are localised the same way (`_LOCAL_MONTHS` /
+  `_LOCAL_MONTH_LETTERS`).
 - **Switching language:** IngeTrazo's **Window ▸ Language** applies on the
   next start (it says so in a message). The toolbars follow the language
   at start-up, and a small timer also re-labels them the moment the
@@ -207,8 +245,9 @@ IngeTrazo's UI is translated with a lightweight JSON catalog
 You do **not** need to edit anything to pick up a language IngeTrazo
 already ships: the command names come from its catalog. To translate the
 plugin's own few strings into a new language, add its code to `_LOCAL`
-(and, for the month abbreviations, `_LOCAL_MONTHS`) near the top of
-`igz_tb_shadows.py` / `igz_tb_style.py`.
+(and, for the month abbreviations/initials, `_LOCAL_MONTHS` and
+`_LOCAL_MONTH_LETTERS`) near the top of `igz_tb_shadows.py` /
+`igz_tb_style.py`.
 
 ---
 
@@ -247,9 +286,19 @@ The extension is also packaged for the community catalog at
 
 ### Shadows
 - Click the icon to **turn shadows on/off**.
-- Drag the **Date** slider → the shadow rotates through the year.
-- Drag the **Time** slider → the shadow rotates through the day.
+- Drag the **Date** slider → the shadow rotates through the year (the
+  month initials underneath mark the months; the track colour is a
+  seasonal gradient).
+- Drag the **Time** slider → the shadow rotates through the day (the
+  track colour is a day/night gradient; the times underneath are that
+  day's **sunrise**, **noon** and **sunset**).
+- Click the **Calendar** button to pick an exact **date and time**.
 - Drag the **Int.** slider → shadow gets lighter or darker.
+- Choose a tile **Source** and set the **Location** (type the coordinates
+  or use the map-picker button) to define the project's
+  latitude/longitude; the sunrise/sunset marks follow. *Load map* keeps
+  the fetched map tiles, otherwise they are discarded after the
+  coordinates are applied.
 
 ---
 
