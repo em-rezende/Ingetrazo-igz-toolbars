@@ -81,8 +81,9 @@ Pré-requisitos atendidos: repositório público, licença livre
    `.../releases/download/v1.5.2/igz_tb_toolbar.zip`.
 
    Na próxima versão, use o script em vez da tela do navegador: ele é
-   **idempotente** (reaproveita a Release da etiqueta e substitui um asset de
-   mesmo nome) e confere o `sha256` no fim.
+   **idempotente** (reaproveita a Release da etiqueta; numa etiqueta já
+   publicada não mexe nem no texto nem num asset que já está correto) e confere
+   o `sha256` no fim.
    ```powershell
    # só verifica o estado atual: não cria, não envia e não apaga nada
    powershell -ExecutionPolicy Bypass -File packaging\publish_release.ps1 `
