@@ -3,7 +3,7 @@
 # Copyright (C) 2026 Ezequiel M. Rezende
 # License: GPL-3.0-or-later (same as IngeTrazo)
 # =========================================================================
-# Build the distributable ``igz_toolbars.zip`` for the IngeTrazo extension
+# Build the distributable ``igz_tb_toolbar.zip`` for the IngeTrazo extension
 # catalog (https://github.com/ingelibre/ingetrazo-extensions).
 #
 # The catalog installs ONE file per entry: a .py file, or a .zip holding a
@@ -20,11 +20,11 @@
 #     python packaging/build_extension.py
 #
 # Output:
-#     dist/igz_toolbars.zip
-#     dist/igz_toolbars.zip.sha256   (the value to paste in the catalog entry)
+#     dist/igz_tb_toolbar.zip
+#     dist/igz_tb_toolbar.zip.sha256   (the value to paste in the catalog entry)
 #
 # The printed SHA-256 is what goes into ``extensions/igz_toolbars.toml``;
-# upload the very same dist/igz_toolbars.zip as a GitHub Release asset of
+# upload the very same dist/igz_tb_toolbar.zip as a GitHub Release asset of
 # the tag named in the entry's ``download`` URL.
 # =========================================================================
 from __future__ import annotations
@@ -38,19 +38,26 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 DIST = os.path.join(ROOT, "dist")
 
-#: Single top-level folder inside the zip (required by the catalog).
-PACKAGE = "igz_toolbars"
+#: Single top-level folder inside the zip (required by the catalog); it is
+#: what IngeTrazo unpacks into <plugins>/, so the installed path becomes
+#: <plugins>/igz_tb_toolbar/.
+PACKAGE = "igz_tb_toolbar"
 ZIP_NAME = f"{PACKAGE}.zip"
 
-#: Modules copied verbatim from the repository root.
+#: Modules copied verbatim from the package source folder
+#: (packaging/<PACKAGE>/), next to this script.
 MODULES = ["igz_tb_style.py", "igz_tb_shadows.py"]
 
 #: Documentation bundled inside the package (optional but tidy).
 EXTRA_FILES = ["LICENSE", "README.md", "README_ptBR.md", "THIRD-PARTY.md"]
 
-#: The package entry point (defines setup(app)); lives in the repo, not the
-#: root, so the repository root stays a valid manual-install layout.
-INIT_SRC = os.path.join(HERE, PACKAGE, "__init__.py")
+#: The package source folder that becomes the single top-level folder in the
+#: zip. It holds the entry point and the modules; the docs and icons are
+#: pulled from the repository root so they are not duplicated here.
+PACKAGE_SRC = os.path.join(HERE, PACKAGE)
+
+#: The package entry point (defines setup(app)).
+INIT_SRC = os.path.join(PACKAGE_SRC, "__init__.py")
 
 #: Icons folder in the repository root.
 ICONS_DIR = os.path.join(ROOT, "icons")
@@ -61,7 +68,7 @@ FIXED_DATE = (2026, 1, 1, 0, 0, 0)
 
 def read_version() -> str:
     """Read the version from the module header, so it never drifts."""
-    with open(os.path.join(ROOT, "igz_tb_style.py"), encoding="utf-8") as fh:
+    with open(os.path.join(PACKAGE_SRC, "igz_tb_style.py"), encoding="utf-8") as fh:
         for line in fh:
             match = re.match(r"#\s*Version:\s*(\S+)", line)
             if match:
@@ -81,7 +88,7 @@ def collect_entries() -> list[tuple[str, bytes]]:
     entries.append((f"{PACKAGE}/__init__.py", _read(INIT_SRC)))
 
     for name in MODULES:
-        entries.append((f"{PACKAGE}/{name}", _read(os.path.join(ROOT, name))))
+        entries.append((f"{PACKAGE}/{name}", _read(os.path.join(PACKAGE_SRC, name))))
 
     for name in EXTRA_FILES:
         path = os.path.join(ROOT, name)
@@ -121,7 +128,7 @@ def build() -> str:
 def main() -> None:
     version = read_version()
     digest = build()
-    print(f"igz_toolbars {version}")
+    print(f"igz_tb_toolbar {version}")
     print(f"  dist/{ZIP_NAME}")
     print(f"  sha256 = \"{digest}\"")
     print("")

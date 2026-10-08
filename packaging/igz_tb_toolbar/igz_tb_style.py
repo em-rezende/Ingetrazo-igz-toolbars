@@ -16,12 +16,12 @@
 # =========================================================================
 # Extension: igz_tb_style (Com suporte a ícones temáticos)
 # Author: Ezequiel M. Rezende
-# Version: 1.5.0
+# Version: 1.5.1
 # Date: 2026-10-01
 # License: GPL-3.0-or-later (same as IngeTrazo)
 #
 # IngeTrazo — "Styles" Toolbar
-# Location: <plugins>/igz_tb_style.py
+# Location: <plugins>/igz_tb_toolbar/igz_tb_style.py
 #
 # Mirrors the commands of the native Camera ▸ Style menu.
 # Instead of reimplementing the logic, it locates the native QAction and
@@ -201,7 +201,6 @@ def _trigger_action(main_window, english: str) -> bool:
     except Exception:
         traceback.print_exc()
         return False
-
 
 
 # --- Following the app language --------------------------------------------

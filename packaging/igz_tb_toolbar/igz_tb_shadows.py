@@ -22,12 +22,13 @@
 # License: GPL-3.0-or-later (same as IngeTrazo)
 #
 # IngeTrazo — "Shadows" Toolbar
-# Location: <plugins>/igz_tb_shadows.py
+# Location: <plugins>/igz_tb_toolbar/igz_tb_shadows.py
 #
 # v3.3.0 — Sliders coloridos (data sazonal e hora dia/noite) com marcas
 #          abaixo; nascer/pôr do sol calculados por algoritmo solar
 #          interno (sem dependências), usando utc_offset da cena.
 # =========================================================================
+
 from __future__ import annotations
 
 import math
@@ -80,7 +81,6 @@ _LOCAL_MONTHS = {
     "pt-BR": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
 }
 
-# Letras dos meses exibidas abaixo do slider de data (ordem Jan..Dez)
 _LOCAL_MONTH_LETTERS = {
     "en": ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
     "es": ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
@@ -153,6 +153,7 @@ def _month_letters():
     return _LOCAL_MONTH_LETTERS.get(_it_language(), _LOCAL_MONTH_LETTERS["en"])
 
 
+# --- Locating the icons folder --------------------------------------------
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -204,33 +205,16 @@ def _load_themed_icon(base_name: str, main_window) -> QIcon:
 # ==========================================================================
 def _sun_times(lat: float, lon: float, d: date,
                utc_offset_hours: float) -> tuple[dtime, dtime]:
-    """
-    Calcula o nascer e o pôr do sol (hora local) para a data e local
-    informados. Retorna (sunrise, sunset) como datetime.time locais.
-
-    Precisão típica: ±2 minutos. Não depende de bibliotecas externas.
-
-    Algoritmo: Almanac for Computers (U.S. Naval Observatory), equação do
-    tempo e declinação solar via série de Fourier. Fórmula clássica do
-    ângulo horário com h₀ = −0.833° (refração atmosférica + semidiâmetro).
-    """
-    # Dia do ano
     n = d.timetuple().tm_yday
     lat_r = math.radians(lat)
 
-    # Longitude média do Sol
     lng_sun = (280.460 + 0.9856474 * n) % 360.0
-    # Anomalia média
     g = math.radians((357.528 + 0.9856003 * n) % 360.0)
-    # Longitude eclíptica
     lam = math.radians(lng_sun + 1.915 * math.sin(g) + 0.020 * math.sin(2 * g))
-    # Obliquidade da eclíptica
     eps = math.radians(23.439 - 0.0000004 * n)
 
-    # Declinação solar
     decl = math.asin(math.sin(eps) * math.sin(lam))
 
-    # Equação do tempo (minutos)
     y = math.tan(eps / 2.0) ** 2
     eot = (
         y * math.sin(2 * lam)
@@ -238,31 +222,24 @@ def _sun_times(lat: float, lon: float, d: date,
         + 4 * 0.0167 * y * math.sin(g) * math.cos(2 * lam)
         - 0.5 * y * y * math.sin(4 * lam)
         - 1.25 * 0.0167 * 0.0167 * math.sin(2 * g)
-    )  # radianos
-    eot_min = math.degrees(eot) * 4.0  # minutos
+    )
+    eot_min = math.degrees(eot) * 4.0
 
-    # Ângulo horário (em graus)
     cos_h = (
-        math.cos(math.radians(90.833))  # h₀ = -0.833°
+        math.cos(math.radians(90.833))
         - math.sin(lat_r) * math.sin(decl)
     ) / (math.cos(lat_r) * math.cos(decl))
     cos_h = max(-1.0, min(1.0, cos_h))
     h_deg = math.degrees(math.acos(cos_h))
 
-    # Hora solar do nascer e pôr
-    # noon (hora solar) = 12:00 − eot/60 + utc_offset
-    # longitude correction: 4 min por grau a oeste do meridiano do fuso
     fuso_central = 15.0 * utc_offset_hours
     lon_corr_min = 4.0 * (lon - fuso_central)
 
-    # Hora local do meio-dia solar (em minutos)
     noon_min = 12 * 60 - eot_min - lon_corr_min
 
-    # Hora local do nascer e pôr (minutos)
     sunrise_min = noon_min - h_deg * 4.0
     sunset_min  = noon_min + h_deg * 4.0
 
-    # Normaliza 0..1439
     sunrise_min = int(round(sunrise_min)) % (24 * 60)
     sunset_min  = int(round(sunset_min))  % (24 * 60)
 
@@ -273,7 +250,6 @@ def _sun_times(lat: float, lon: float, d: date,
 
 
 def _get_utc_offset(main_window) -> float:
-    """Lê o utc_offset de scene.shadows; fallback -3 (Brasília)."""
     sh = _get_scene_shadows(main_window)
     if sh is not None:
         try:
@@ -286,7 +262,6 @@ def _get_utc_offset(main_window) -> float:
 
 
 def _get_lat_lon(main_window) -> tuple[float, float]:
-    """Lê lat/lon das sombras; fallback -19.9167, -43.9345 (BH)."""
     sh = _get_scene_shadows(main_window)
     if sh is not None:
         lat = getattr(sh, "latitude", None)
@@ -551,7 +526,6 @@ _DATE_SLIDER: QSlider | None = None
 _TIME_SLIDER: QSlider | None = None
 
 
-# CSS do QSlider: trilha com gradiente, alça visível
 def _slider_qss(gradient_qss: str, height: int = 4) -> str:
     return f"""
     QSlider::groove:horizontal {{
@@ -576,36 +550,33 @@ def _slider_qss(gradient_qss: str, height: int = 4) -> str:
     """
 
 
-# Gradiente sazonal (hemisfério sul): verão vermelho, inverno amarelo
 _SEASONAL_QSS = (
     "qlineargradient(x1:0, y1:0, x2:1, y2:0, "
-    # Jan (vermelho forte) → Fev (vermelho) → Mar (laranja) →
-    "stop:0.00 #c8171a, "   # 01 Jan — verão
-    "stop:0.09 #d53825, "   # ~01 Fev
-    "stop:0.18 #e07a2c, "   # ~01 Mar
-    "stop:0.27 #ecb13a, "   # ~01 Abr
-    "stop:0.36 #f2d160, "   # ~01 Mai
-    "stop:0.45 #f4e39a, "   # ~01 Jun
-    "stop:0.54 #f7edb4, "   # ~15 Jul — pico do inverno
-    "stop:0.63 #f4e096, "   # ~01 Ago
-    "stop:0.72 #eec24c, "   # ~01 Set
-    "stop:0.81 #e88a2e, "   # ~01 Out
-    "stop:0.90 #dd4a24, "   # ~01 Nov
-    "stop:1.00 #c8171a)"    # 31 Dez — verão
+    "stop:0.00 #c8171a, "
+    "stop:0.09 #d53825, "
+    "stop:0.18 #e07a2c, "
+    "stop:0.27 #ecb13a, "
+    "stop:0.36 #f2d160, "
+    "stop:0.45 #f4e39a, "
+    "stop:0.54 #f7edb4, "
+    "stop:0.63 #f4e096, "
+    "stop:0.72 #eec24c, "
+    "stop:0.81 #e88a2e, "
+    "stop:0.90 #dd4a24, "
+    "stop:1.00 #c8171a)"
 )
 
-# Gradiente dia/noite: noite azul escuro → amanhecer → dia claro → entardecer → noite
 _DAYNIGHT_QSS = (
     "qlineargradient(x1:0, y1:0, x2:1, y2:0, "
-    "stop:0.00 #0b2340, "   # 00:00 — noite
-    "stop:0.18 #163a63, "   # ~04:20 — pré-amanhecer
-    "stop:0.25 #a8c8e6, "   # ~06:00 — amanhecer
-    "stop:0.33 #eef4fb, "   # ~08:00 — manhã
-    "stop:0.50 #ffffff, "   # 12:00 — meio-dia
-    "stop:0.67 #eef4fb, "   # ~16:00 — tarde
-    "stop:0.75 #a8c8e6, "   # ~18:00 — entardecer
-    "stop:0.82 #163a63, "   # ~19:40 — crepúsculo
-    "stop:1.00 #0b2340)"    # 23:59 — noite
+    "stop:0.00 #0b2340, "
+    "stop:0.18 #163a63, "
+    "stop:0.25 #a8c8e6, "
+    "stop:0.33 #eef4fb, "
+    "stop:0.50 #ffffff, "
+    "stop:0.67 #eef4fb, "
+    "stop:0.75 #a8c8e6, "
+    "stop:0.82 #163a63, "
+    "stop:1.00 #0b2340)"
 )
 
 
@@ -621,7 +592,6 @@ def _make_date_slider(main_window) -> QWidget:
     outer.setContentsMargins(4, 0, 4, 0)
     outer.setSpacing(0)
 
-    # --- Linha 1: caption + slider + valor --------------------------------
     row = QWidget()
     lay = QHBoxLayout(row)
     lay.setContentsMargins(0, 0, 0, 0)
@@ -655,7 +625,6 @@ def _make_date_slider(main_window) -> QWidget:
     lay.addWidget(s)
     lay.addWidget(lbl_val)
 
-    # --- Linha 2: letras dos meses alinhadas ao slider --------------------
     months_row = QWidget()
     m_lay = QHBoxLayout(months_row)
     m_lay.setContentsMargins(0, 0, 0, 0)
@@ -695,6 +664,7 @@ def _make_date_slider(main_window) -> QWidget:
 
     return container
 
+
 # ==========================================================================
 # Slider de HORA
 # ==========================================================================
@@ -707,7 +677,6 @@ def _make_time_slider(main_window) -> QWidget:
     outer.setContentsMargins(4, 0, 4, 0)
     outer.setSpacing(0)
 
-    # --- Linha 1: caption + slider + valor --------------------------------
     row = QWidget()
     lay = QHBoxLayout(row)
     lay.setContentsMargins(0, 0, 0, 0)
@@ -741,7 +710,6 @@ def _make_time_slider(main_window) -> QWidget:
     lay.addWidget(s)
     lay.addWidget(lbl_val)
 
-    # --- Linha 2: sunrise / Meio-dia / sunset alinhados ao slider ---------
     sun_row = QWidget()
     sun_lay = QHBoxLayout(sun_row)
     sun_lay.setContentsMargins(0, 0, 0, 0)
@@ -814,22 +782,17 @@ def _make_time_slider(main_window) -> QWidget:
     def _on_time_changed(v: int) -> None:
         lbl_val.setText(_minutes_to_text(v))
         _change_time(main_window, v)
-        # NÃO recalcular sunrise/sunset — só depende da data e lat/lon.
 
     s.valueChanged.connect(_on_time_changed)
     _REFRESH_HOOKS.append(lambda: lbl_val.setText(_minutes_to_text(s.value())))
 
     return container
 
-# Lista de labels de sol para atualizar quando data/lat/lon/língua mudam
+
 _SUN_LABELS: list = []
 
 
 def _refresh_sun_marks() -> None:
-    """
-    Recalcula todas as marcas de nascer/pôr do sol.
-    Chamado APENAS quando data, lat/lon ou idioma mudam — nunca pela hora.
-    """
     for item in list(_SUN_LABELS):
         hooks = getattr(item, "_refresh_hooks", None)
         if hooks:
@@ -881,7 +844,7 @@ def _make_calendar_button(main_window) -> QWidget:
     btn_cal.clicked.connect(_open_calendar)
     lay.addWidget(btn_cal)
     return w
-    
+
 
 # ==========================================================================
 # Slider de intensidade
@@ -928,7 +891,7 @@ def _make_map_source_combo(main_window) -> QWidget:
     combo = QComboBox()
     combo.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
     combo.setMinimumContentsLength(12)
-    combo.setFixedWidth(110)            # ← largura exata
+    combo.setFixedWidth(110)
     for label, sid in _MAP_SOURCES:
         combo.addItem(label, sid)
 
@@ -955,6 +918,7 @@ def _make_map_source_combo(main_window) -> QWidget:
     lay.addWidget(caption)
     lay.addWidget(combo)
     return w
+
 
 # ==========================================================================
 # Coordenadas + botão mapa + checkbox
@@ -1113,19 +1077,11 @@ def _create_shadows_toolbar(main_window) -> None:
         tb.addSeparator()
         tb.addWidget(_make_location_widget(main_window))
 
-        # ------------------------------------------------------------------
-        # Spacer invisível: absorve todo o espaço à direita.
-        # É isto que empurra TODOS os widgets para a esquerda quando a
-        # barra está acoplada, e faz com que a barra preencha a largura
-        # da janela (como as demais toolbars do IngeTrazo).
-        # ------------------------------------------------------------------
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         tb.addWidget(spacer)
 
-        # A barra em si ocupa toda a linha disponível quando acoplada.
         tb.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        # Sem setMaximumWidth — o spacer já resolve o alinhamento.
 
         _TOOLBAR_CREATED = True
         _install_language_watcher()
@@ -1153,4 +1109,3 @@ def setup(app):
         _create_shadows_toolbar(mw)
     except Exception:
         traceback.print_exc()
-        

@@ -15,9 +15,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =========================================================================
 # =========================================================================
-# Extension: igz_toolbars — package entry point
+# Extension: igz_tb_toolbar — package entry point
+# Location: <plugins>/igz_tb_toolbar/__init__.py
 # Author: Ezequiel M. Rezende
-# Version: 1.5.0
+# Version: 1.5.1
 # Date: 2026-10-01
 # License: GPL-3.0-or-later (same as IngeTrazo)
 #
@@ -39,6 +40,7 @@
 # works whether IngeTrazo imports the package or the file directly, without
 # relying on sys.path) and calls both `setup(app)` functions in turn.
 # =========================================================================
+
 from __future__ import annotations
 
 import importlib.util
@@ -53,19 +55,14 @@ _DEBUG = True
 
 def _log(msg: str) -> None:
     if _DEBUG:
-        print(f"[igz_toolbars] {msg}", file=sys.stderr, flush=True)
+        print(f"[igz_tb_toolbar] {msg}", file=sys.stderr, flush=True)
 
 
 def _load_module(module_name: str):
-    """Load a sibling .py file by path.
-
-    Importing by path (instead of a relative import) keeps this package
-    working however IngeTrazo discovers it — the docs warn plugins must not
-    assume the plugin folder is on ``sys.path`` nor that they are importable
-    by package name."""
+    """Load a sibling .py file by path within the igz_tb_toolbar package."""
     path = os.path.join(_HERE, f"{module_name}.py")
     spec = importlib.util.spec_from_file_location(
-        f"igz_toolbars_{module_name}", path
+        f"igz_tb_style_{module_name}", path
     )
     if spec is None or spec.loader is None:
         raise ImportError(f"cannot load {path}")
@@ -75,7 +72,6 @@ def _load_module(module_name: str):
     return module
 
 
-# Loaded once, at import time, just like a single-file plugin would be.
 try:
     _STYLE = _load_module("igz_tb_style")
 except Exception:
@@ -90,10 +86,7 @@ except Exception:
 
 
 def setup(app) -> None:
-    """Called once by IngeTrazo when the main window is built.
-
-    See ``docs/plugins.md → setup(app)``. Builds both toolbars; a failure in
-    one never stops the other (and never breaks IngeTrazo itself)."""
+    """Called once by IngeTrazo when the main window is built."""
     _log(f"setup(app) — PID={os.getpid()}")
     for name, module in (("igz_tb_style", _STYLE),
                          ("igz_tb_shadows", _SHADOWS)):

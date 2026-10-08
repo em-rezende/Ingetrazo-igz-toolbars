@@ -2,12 +2,14 @@
 # Copyright (C) 2026 Ezequiel M. Rezende
 # License: GPL-3.0-or-later (same as IngeTrazo)
 # =========================================================================
-# Build the distributable igz_toolbars.zip for the IngeTrazo extension
+# Build the distributable igz_tb_toolbar.zip for the IngeTrazo extension
 # catalog (https://github.com/ingelibre/ingetrazo-extensions).
 #
 # Windows / PowerShell builder — no Python needed. It produces the SAME
 # archive layout as packaging/build_extension.py (one top-level folder,
-# igz_toolbars/, holding __init__.py + both modules + icons/ + docs).
+# igz_tb_toolbar/, holding __init__.py + both modules + icons/ + docs).
+# That folder is what the catalog/IngeTrazo unpacks into <plugins>/, so the
+# installed path becomes <plugins>/igz_tb_toolbar/.
 #
 # The catalog installs ONE file per entry: a .py file, or a .zip holding a
 # single folder with an __init__.py (see TEMPLATE.toml in that repository).
@@ -21,8 +23,8 @@
 #     powershell -ExecutionPolicy Bypass -File packaging\build_extension.ps1
 #
 # Output:
-#     dist/igz_toolbars.zip
-#     dist/igz_toolbars.zip.sha256
+#     dist/igz_tb_toolbar.zip
+#     dist/igz_tb_toolbar.zip.sha256
 # =========================================================================
 [CmdletBinding()]
 param(
@@ -39,7 +41,7 @@ if (-not $scriptDir) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.P
 if (-not $Output) { $Output = Join-Path $scriptDir '..\dist' }
 
 $root = (Resolve-Path (Join-Path $scriptDir '..')).Path
-$package = 'igz_toolbars'
+$package = 'igz_tb_toolbar'
 $zipName = "$package.zip"
 
 # Fixed timestamp -> reproducible archive.
@@ -60,7 +62,7 @@ function Add-Entry([string]$arc, [string]$src) {
 
 Add-Entry "$package/__init__.py" (Join-Path $scriptDir "$package\__init__.py")
 foreach ($m in @('igz_tb_style.py', 'igz_tb_shadows.py')) {
-    Add-Entry "$package/$m" (Join-Path $root $m)
+    Add-Entry "$package/$m" (Join-Path $scriptDir "$package\$m")
 }
 foreach ($f in @('LICENSE', 'README.md', 'README_ptBR.md', 'THIRD-PARTY.md')) {
     Add-Entry "$package/$f" (Join-Path $root $f)
@@ -104,11 +106,11 @@ $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $zipPath).Hash.ToLower()
 Set-Content -LiteralPath "$zipPath.sha256" -Value "$hash  $zipName" -Encoding ascii
 
 $version = '0.0.0'
-foreach ($line in Get-Content -LiteralPath (Join-Path $root 'igz_tb_style.py')) {
+foreach ($line in Get-Content -LiteralPath (Join-Path $scriptDir "$package\igz_tb_style.py")) {
     if ($line -match '^#\s*Version:\s*(\S+)') { $version = $Matches[1]; break }
 }
 
-Write-Host "igz_toolbars $version"
+Write-Host "igz_tb_toolbar $version"
 Write-Host "  $zipPath"
 Write-Host ("  sha256 = ""{0}""" -f $hash)
 Write-Host ''

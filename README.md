@@ -5,7 +5,7 @@ inspired by SketchUp: one for **display styles**, one for **shadows**.
 
 - **Author:** Ezequiel M. Rezende
 - **Date:** 2026-10-01
-- **Version:** 1.5.0
+- **Version:** 1.5.1
 - **License:** [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html)
   (same as IngeTrazo — see [LICENSE](https://github.com/ingelibre/ingetrazo/blob/main/LICENSE))
 
@@ -22,27 +22,29 @@ toolbar (date, time, calendar, intensity, map source and location).*
 
 ```
 <plugins>/
-├── igz_tb_style.py          # "Styles" toolbar
-├── igz_tb_shadows.py        # "Shadows" toolbar
-├── README.md                # this file
-├── README_ptBR.md           # Portuguese version
-├── LICENSE                  # full GPL-3.0 text
-├── THIRD-PARTY.md           # third-party notices
-└── icons/
-    ├── tb_default.svg            / tb_default_light.svg
-    ├── tb_architectural.svg      / tb_architectural_light.svg
-    ├── tb_shaded.svg             / tb_shaded_light.svg
-    ├── tb_hiddenline.svg         / tb_hiddenline_light.svg
-    ├── tb_monochrome.svg         / tb_monochrome_light.svg
-    ├── tb_wireframe.svg          / tb_wireframe_light.svg
-    ├── tb_xray.svg               / tb_xray_light.svg
-    ├── tb_xraytoggle.svg         / tb_xraytoggle_light.svg
-    ├── tb_edges.svg              / tb_edges_light.svg
-    ├── tb_profiles.svg           / tb_profiles_light.svg
-    ├── tb_backedges.svg          / tb_backedges_light.svg
-    ├── tb_hiddenobjects.svg      / tb_hiddenobjects_light.svg
-    ├── tb_hiddengeometry.svg     / tb_hiddengeometry_light.svg
-    └── tb_shadowtoggle.svg       / tb_shadowtoggle_light.svg
+└── igz_tb_toolbar/
+    ├── __init__.py              # package entry point (setup(app))
+    ├── igz_tb_style.py          # "Styles" toolbar
+    ├── igz_tb_shadows.py        # "Shadows" toolbar
+    ├── README.md                # this file
+    ├── README_ptBR.md           # Portuguese version
+    ├── LICENSE                  # full GPL-3.0 text
+    ├── THIRD-PARTY.md           # third-party notices
+    └── icons/
+        ├── tb_default.svg            / tb_default_light.svg
+        ├── tb_architectural.svg      / tb_architectural_light.svg
+        ├── tb_shaded.svg             / tb_shaded_light.svg
+        ├── tb_hiddenline.svg         / tb_hiddenline_light.svg
+        ├── tb_monochrome.svg         / tb_monochrome_light.svg
+        ├── tb_wireframe.svg          / tb_wireframe_light.svg
+        ├── tb_xray.svg               / tb_xray_light.svg
+        ├── tb_xraytoggle.svg         / tb_xraytoggle_light.svg
+        ├── tb_edges.svg              / tb_edges_light.svg
+        ├── tb_profiles.svg           / tb_profiles_light.svg
+        ├── tb_backedges.svg          / tb_backedges_light.svg
+        ├── tb_hiddenobjects.svg      / tb_hiddenobjects_light.svg
+        ├── tb_hiddengeometry.svg     / tb_hiddengeometry_light.svg
+        └── tb_shadowtoggle.svg       / tb_shadowtoggle_light.svg
 ```
 
 ---
@@ -257,8 +259,11 @@ plugin's own few strings into a new language, add its code to `_LOCAL`
    - **Linux:** `~/.local/share/ingetrazo/plugins/`
    - **Windows:** `%APPDATA%\ingetrazo\plugins\`
    - Or use the **Extensions ▸ Open plugins folder** menu.
-2. Copy `igz_tb_style.py`, `igz_tb_shadows.py`, `README.md`, and the
-   `icons/` folder into it.
+2. Unpack the **`igz_tb_toolbar`** folder — from the latest release ZIP, or
+   from the `dist/igz_tb_toolbar.zip` you build with
+   `packaging/build_extension.ps1` (it holds `__init__.py`, both modules,
+   the docs and the `icons/` folder) — into that plugins folder, so the
+   files end up at `<plugins>/igz_tb_toolbar/`.
 3. Restart IngeTrazo.
 
 The **Styles** and **Shadows** toolbars appear in the top area.
@@ -270,7 +275,8 @@ The extension is also packaged for the community catalog at
 <https://github.com/ingelibre/ingetrazo-extensions>), which installs a single
 `.zip` holding one folder with an `__init__.py`. Build that archive with
 `packaging/build_extension.ps1` (Windows) or `packaging/build_extension.py`
-(any platform); it lands in `dist/igz_toolbars.zip`. See
+(any platform); it lands in `dist/igz_tb_toolbar.zip` and unpacks into
+`<plugins>/igz_tb_toolbar/`. See
 [`PUBLISHING.md`](PUBLISHING.md) for the release and submission steps.
 
 ---

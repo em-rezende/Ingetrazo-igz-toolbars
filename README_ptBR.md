@@ -5,7 +5,7 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 
 - **Autor:** Ezequiel M. Rezende
 - **Data:** 2026-10-01
-- **Versão:** 1.5.0
+- **Versão:** 1.5.1
 - **Licença:** [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html)
   (mesma do IngeTrazo — ver [LICENSE](https://github.com/ingelibre/ingetrazo/blob/main/LICENSE))
 
@@ -22,27 +22,29 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 
 ```
 <plugins>/
-├── igz_tb_style.py          # barra "Styles"
-├── igz_tb_shadows.py        # barra "Shadows"
-├── README.md                # este arquivo (inglês)
-├── README_ptBR.md           # esta versão em português
-├── LICENSE                  # texto completo da GPL-3.0
-├── THIRD-PARTY.md           # avisos de terceiros
-└── icons/
-    ├── tb_default.svg            / tb_default_light.svg
-    ├── tb_architectural.svg      / tb_architectural_light.svg
-    ├── tb_shaded.svg             / tb_shaded_light.svg
-    ├── tb_hiddenline.svg         / tb_hiddenline_light.svg
-    ├── tb_monochrome.svg         / tb_monochrome_light.svg
-    ├── tb_wireframe.svg          / tb_wireframe_light.svg
-    ├── tb_xray.svg               / tb_xray_light.svg
-    ├── tb_xraytoggle.svg         / tb_xraytoggle_light.svg
-    ├── tb_edges.svg              / tb_edges_light.svg
-    ├── tb_profiles.svg           / tb_profiles_light.svg
-    ├── tb_backedges.svg          / tb_backedges_light.svg
-    ├── tb_hiddenobjects.svg      / tb_hiddenobjects_light.svg
-    ├── tb_hiddengeometry.svg     / tb_hiddengeometry_light.svg
-    └── tb_shadowtoggle.svg       / tb_shadowtoggle_light.svg
+└── igz_tb_toolbar/
+    ├── __init__.py              # ponto de entrada do pacote (setup(app))
+    ├── igz_tb_style.py          # barra "Styles"
+    ├── igz_tb_shadows.py        # barra "Shadows"
+    ├── README.md                # este arquivo (inglês)
+    ├── README_ptBR.md           # esta versão em português
+    ├── LICENSE                  # texto completo da GPL-3.0
+    ├── THIRD-PARTY.md           # avisos de terceiros
+    └── icons/
+        ├── tb_default.svg            / tb_default_light.svg
+        ├── tb_architectural.svg      / tb_architectural_light.svg
+        ├── tb_shaded.svg             / tb_shaded_light.svg
+        ├── tb_hiddenline.svg         / tb_hiddenline_light.svg
+        ├── tb_monochrome.svg         / tb_monochrome_light.svg
+        ├── tb_wireframe.svg          / tb_wireframe_light.svg
+        ├── tb_xray.svg               / tb_xray_light.svg
+        ├── tb_xraytoggle.svg         / tb_xraytoggle_light.svg
+        ├── tb_edges.svg              / tb_edges_light.svg
+        ├── tb_profiles.svg           / tb_profiles_light.svg
+        ├── tb_backedges.svg          / tb_backedges_light.svg
+        ├── tb_hiddenobjects.svg      / tb_hiddenobjects_light.svg
+        ├── tb_hiddengeometry.svg     / tb_hiddengeometry_light.svg
+        └── tb_shadowtoggle.svg       / tb_shadowtoggle_light.svg
 ```
 
 ---
@@ -257,8 +259,11 @@ em `_LOCAL` (e, para as abreviações/iniciais de mês, `_LOCAL_MONTHS` e
    - **Linux:** `~/.local/share/ingetrazo/plugins/`
    - **Windows:** `%APPDATA%\ingetrazo\plugins\`
    - Ou use o menu **Extensões ▸ Abrir pasta de plugins**.
-2. Copie `igz_tb_style.py`, `igz_tb_shadows.py`, `README.md` e a pasta
-   `icons/` para lá.
+2. Descompacte a pasta **`igz_tb_toolbar`** — do ZIP da última release, ou do
+   `dist/igz_tb_toolbar.zip` gerado com `packaging/build_extension.ps1` (que
+   contém `__init__.py`, os dois módulos, os documentos e a pasta `icons/`)
+   — na pasta de plugins, de modo que os arquivos fiquem em
+   `<plugins>/igz_tb_toolbar/`.
 3. Reinicie o IngeTrazo.
 
 As barras **Styles** e **Shadows** aparecem na área superior.
@@ -270,7 +275,8 @@ A extensão também está empacotada para o catálogo da comunidade em
 <https://github.com/ingelibre/ingetrazo-extensions>), que instala um único
 `.zip` contendo uma pasta com um `__init__.py`. Gere esse arquivo com
 `packaging/build_extension.ps1` (Windows) ou `packaging/build_extension.py`
-(qualquer sistema); ele sai em `dist/igz_toolbars.zip`. Veja
+(qualquer sistema); ele sai em `dist/igz_tb_toolbar.zip` e extrai em
+`<plugins>/igz_tb_toolbar/`. Veja
 [`PUBLISHING.md`](PUBLISHING.md) para os passos de release e submissão.
 
 ---

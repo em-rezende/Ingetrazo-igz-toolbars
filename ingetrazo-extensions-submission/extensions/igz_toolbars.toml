@@ -4,18 +4,22 @@
 # Copy this file to that repository as `extensions/igz_toolbars.toml` and open
 # a pull request. The `sha256` below is the fingerprint of the exact archive
 # built by `packaging/build_extension.ps1` / `packaging/build_extension.py`
-# and uploaded as the `v1.5.0` GitHub Release asset named `igz_toolbars.zip`.
+# and uploaded as the `v1.5.1` GitHub Release asset named `igz_tb_toolbar.zip`.
 # If you rebuild the archive, replace `sha256` with the new value the build
 # script prints (or let the automatic check tell you the right one).
+#
+# Note: `id` stays `igz_toolbars` to keep this entry distinct in the catalog
+# that already published v1.4.0 under that id; the packaged folder inside the
+# archive is `igz_tb_toolbar/` (it installs into <plugins>/igz_tb_toolbar/).
 
 id = "igz_toolbars"
-version = "1.5.0"
+version = "1.5.1"
 author = "Ezequiel M. Rezende"
 author_url = "https://github.com/em-rezende"
 license = "GPL-3.0-or-later"
 repository = "https://github.com/em-rezende/Ingetrazo-igz-toolbars"
-download = "https://github.com/em-rezende/Ingetrazo-igz-toolbars/releases/download/v1.5.0/igz_toolbars.zip"
-sha256 = "854d0874dc68b04908e8b74f5d581574560dfb962bf645bf3a1624a1427904d4"
+download = "https://github.com/em-rezende/Ingetrazo-igz-toolbars/releases/download/v1.5.1/igz_tb_toolbar.zip"
+sha256 = "ad3ffed2a2f9af276c7499afee35e98bc92fa8ae5811c4aead26687203cd3eee"
 ingetrazo = "0.5.7"
 tags = ["rendering", "drawing", "productivity"]
 screenshot = "igz_toolbars.png"
