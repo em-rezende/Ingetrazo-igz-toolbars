@@ -1,11 +1,15 @@
 # Publicar no catálogo de Extensões do IngeTrazo
 
-> **Status: a Release `v1.5.2` já está publicada no GitHub com o asset
-> `igz_tb_toolbar.zip` verificado; falta apenas o pull request no catálogo.** A
-> v1.5.2 é a versão das **três barras** — *Styles*, *Shadows* e *Map*. No
-> catálogo, a ficha em `main` ainda é a **1.5.0** (a PR #58, da 1.5.1, segue
-> aberta), então a PR da v1.5.2 substitui as duas de uma vez. Este guia descreve
-> os passos da publicação inicial e, na prática, como publicar cada atualização.
+> **Status: publicado.** A Release `v1.5.2` está no GitHub com o asset
+> `igz_tb_toolbar.zip` verificado, e a ficha da **1.5.2** — a versão das **três
+> barras** (*Styles*, *Shadows* e *Map*) — foi **mesclada no catálogo** pela PR
+> #58 em 08/10/2026 (commit `91bafc9`): o `check` passou e o `automerge` fundiu
+> a PR sozinho, sem revisão manual. A automação já reconstruiu o
+> `catalog.json`, então a página do catálogo serve esta versão. A extensão
+> aparece como **«Comunidade»** até um mantenedor ler o arquivo exato e
+> registrar o sha256 em `reviewed.toml` — nada mais depende de você. Este guia
+> descreve os passos da publicação inicial e, na prática, como publicar cada
+> atualização.
 
 Este documento (PT) e a seção em inglês mais abaixo descrevem como publicar
 esta extensão no catálogo <https://github.com/ingelibre/ingetrazo-extensions>
@@ -114,8 +118,12 @@ Pré-requisitos atendidos: repositório público, licença livre
    Se a **PR #58** (que levava a **1.5.1**) ainda estiver aberta, o caminho
    limpo é mandar esta atualização para o **mesmo branch** dela
    (`add-igz_toolbars-1.5.1` no fork `em-rezende/ingetrazo-extensions`) e
-   trocar o título para v1.5.2, em vez de abrir uma segunda PR: o catálogo em
-   `main` ainda está na **1.5.0**.
+   trocar o título para v1.5.2, em vez de abrir uma segunda PR. ✅ **Foi assim
+   que a 1.5.2 entrou:** a PR levava 1.5.1, o commit único foi alterado
+   (`git commit --amend`) e o branch atualizado com
+   `git push --force-with-lease origin add-igz_toolbars-1.5.1`; a ficha da
+   versão antiga nunca chegou a ser publicada. Para a **próxima** versão, repita
+   o truque enquanto uma PR sua estiver aberta.
 
 6. **Responda o checklist** do template do PR:
    - [x] Um arquivo `extensions/igz_toolbars.toml`, copiado de `TEMPLATE.toml`.
@@ -128,16 +136,25 @@ Pré-requisitos atendidos: repositório público, licença livre
      IngeTrazo, que é quem baixa os tiles), **não** executa programas externos
      e **não** apaga arquivos.
 
-Um robô revisa a ficha em ~1 minuto e um mantenedor aprova. Depois disso, a
-página do catálogo se atualiza sozinha. A extensão aparece como
-**«Comunidade»** até um mantenedor ler o arquivo exato (aí vira
-**«Revisada»**).
+Um robô revisa a ficha em ~1 minuto: o `check` roda `pytest -q tests` e
+`python tools/catalog.py check` (ficha, download, `sha256` e captura) e, quando
+nada falha, é o próprio `automerge` que faz o merge, sem esperar um mantenedor —
+foi o que aconteceu com a PR #58 (merge em ~15 s). Em seguida o `publish`
+reconstrói o `catalog.json` e a página do catálogo se atualiza sozinha. A
+extensão aparece como **«Comunidade»** até um mantenedor ler o arquivo exato
+(aí vira **«Revisada»**).
 
 
 ---
 
 ## Detalhes que você pode querer ajustar
 
+- **Limites dos campos da ficha** (`name` ≤ 60, `summary` ≤ 240,
+  `description` ≤ 2000 caracteres por idioma; 1–4 tags da lista fixa): a tabela
+  completa, com o que o `pytest -q tests` do catálogo reprova, está em
+  [`ingetrazo-extensions-submission/README.md`](ingetrazo-extensions-submission/README.md).
+  Resumos longos vão em `[description]`, não em `[summary]` — foi um `summary`
+  de 290 caracteres que travou o `check` da PR #58 antes do ajuste.
 - **Versão do IngeTrazo** (`ingetrazo = "0.5.7"`): use a versão com que você
   realmente testou.
 - **Tags** (`tags = [...]`): só são válidas `architecture`, `bim`,
@@ -157,10 +174,15 @@ página do catálogo se atualiza sozinha. A extensão aparece como
 
 # Publishing to the IngeTrazo extension catalog (EN)
 
-> **Status: the GitHub Release `v1.5.2` is live and its asset is verified; only
-> the catalog pull request is left.** v1.5.2 is the **three-toolbar** version —
-> *Styles*, *Shadows* and *Map*. The catalog entry on `main` is still **1.5.0**
-> (PR #58, for 1.5.1, is still open), so the v1.5.2 PR supersedes both.
+> **Status: published.** The GitHub Release `v1.5.2` is live with a verified
+> asset, and the **1.5.2** entry — the **three-toolbar** version (*Styles*,
+> *Shadows* and *Map*) — was **merged into the catalog** by pull request #58 on
+> 2026-10-08 (commit `91bafc9`): the automatic `check` passed and the
+> `automerge` workflow merged it on its own, with no manual review. The
+> automation has already rebuilt `catalog.json`, so the catalog page serves
+> this version. The extension shows as **«Community»** until a maintainer reads
+> the exact file and records its sha256 in `reviewed.toml` — nothing else is
+> pending on your side.
 
 Everything needed is in place (clean code, a `.zip` builder, the entry file
 and a screenshot). To publish, once you authorise it:
@@ -183,7 +205,11 @@ and a screenshot). To publish, once you authorise it:
    `extensions/igz_toolbars.toml` and
    `ingetrazo-extensions-submission/screenshots/igz_toolbars.png` to
    `screenshots/igz_toolbars.png` (browser: *Add file ▸ Create new file* /
-   *Upload files*), then **Create pull request**.
+   *Upload files*), then **Create pull request**. ✔️ **Done on 2026-10-08** —
+   it is pull request #58 (branch `add-igz_toolbars-1.5.1`, one commit), which
+   passed `check` and was merged automatically by `automerge`; for the next
+   version, reuse the same branch while that PR is still open instead of
+   opening a second one.
 6. Fill in the PR template checklist and answer the prompts (the extension
    uses no network by itself — the *Map* toolbar only triggers IngeTrazo's own
    **Terreno** panel, which does the tile download — runs no external programs

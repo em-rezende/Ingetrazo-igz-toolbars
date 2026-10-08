@@ -1,11 +1,13 @@
 # Submission bundle — IngeTrazo extension catalog
 
-> **Update bundle for the IngeTrazo extension catalog.** The catalog on `main`
-> published v1.4.0 and then 1.5.0; the 1.5.1 pull request
-> (<https://github.com/ingelibre/ingetrazo-extensions/pull/58>) is still open.
-> These are the files to copy into a pull request of
-> <https://github.com/ingelibre/ingetrazo-extensions> to publish v1.5.2 — the
-> version with the **three** toolbars (*Styles*, *Shadows* and *Map*).
+> **Bundle already published.** Pull request #58
+> (<https://github.com/ingelibre/ingetrazo-extensions/pull/58>) carried these
+> two files and was **merged automatically on 2026-10-08** (squash commit
+> `91bafc9`), so the catalog's `main` — and the `catalog.json` read by
+> <https://ingetrazo.com/extensiones> — already lists **igz_toolbars 1.5.2**,
+> the version with the **three** toolbars (*Styles*, *Shadows* and *Map*). The
+> copies here stay in sync for a future release; the extension shows as
+> «Community» until a maintainer records its sha256 in `reviewed.toml`.
 
 Copy these two things into the catalog repository:
 
@@ -36,5 +38,26 @@ in the template checklist.
 - `version` is **1.5.2** and `tags` gained `terrain`, because the **Map**
   toolbar drives the **Terreno** (BaseMap) panel: tile source, project
   location and *Load map*.
+
+## What the catalog's check demands
+
+Every pull request runs `pytest -q tests` and `python tools/catalog.py check`.
+Both refuse an entry that breaks any rule below (the offline tests catch all of
+them except the download itself), so the lengths matter:
+
+| Field | Rule |
+|---|---|
+| `name` | at most **60** characters per language |
+| `summary` | at most **240** characters per language |
+| `description` | optional, at most **2000** characters per language |
+| `tags` | 1 to 4, from the catalog's fixed list (`terrain` is one of them) |
+| `license` | SPDX id of a free licence (here `GPL-3.0-or-later`) |
+| `download` | `https://`, ending in `.py` or `.zip`, naming a tag or a commit — never a branch |
+| `sha256` | the 64-character hash of exactly that file |
+| `screenshot` | a file name in `screenshots/`, at most 600 KB, `.png`/`.jpg`/`.webp` |
+
+The archive itself must hold **one** package folder with an `__init__.py` inside
+(here `igz_tb_toolbar/`), at most 5 MB on disk, and the code must expose a
+top-level `setup(app)` function or a `Tool` subclass.
 
 Full, step-by-step instructions are in [`../PUBLISHING.md`](../PUBLISHING.md).

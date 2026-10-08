@@ -30,6 +30,11 @@ en = "Styles, Shadows and Map toolbars"
 pt = "Barras de estilos, sombras e mapa"
 
 [summary]
-es = "Tres barras inspiradas en SketchUp: la de estilos replica el menú Cámara ▸ Estilo con 13 botones, la de sombras añade un interruptor y deslizadores de fecha, hora e intensidad, y la de mapa reúne la fuente de tiles, la localización del proyecto y la carga del mapa del panel Terreno."
-en = "Three SketchUp-inspired toolbars: the Styles one mirrors the Camera ▸ Style menu with 13 buttons, the Shadows one adds a toggle plus date, time and intensity sliders, and the Map one gathers the tile source, the project location and the map loading of the Terreno panel."
-pt = "Três barras inspiradas no SketchUp: a de estilos espelha o menu Câmera ▸ Estilo com 13 botões, a de sombras traz um botão e sliders de data, hora e intensidade, e a de mapa reúne a fonte de tiles, a localização do projeto e o carregamento do mapa do painel Terreno."
+es = "Tres barras inspiradas en SketchUp: estilos replica el menú Cámara ▸ Estilo con 13 botones; sombras añade un interruptor y deslizadores de fecha, hora e intensidad; mapa reúne la fuente de tiles, la ubicación y la carga del mapa."
+en = "Three SketchUp-inspired toolbars: Styles mirrors the Camera ▸ Style menu with 13 buttons; Shadows adds a toggle and date, time and intensity sliders; Map gathers the tile source and loads the map."
+pt = "Três barras inspiradas no SketchUp: estilos espelha o menu Câmera ▸ Estilo com 13 botões; sombras traz um botão e sliders de data, hora e intensidade; mapa reúne a fonte de tiles e carrega o mapa."
+
+[description]
+es = "Tres barras de la ventana principal, inspiradas en SketchUp, para trabajar con los estilos de visualización, las sombras y el terreno sin recorrer el menú Cámara: la de estilos replica Cámara ▸ Estilo con 13 botones (los estilos de visualización y el interruptor de rayos X), la de sombras añade un interruptor general y deslizadores de fecha, hora e intensidad, y la de mapa reúne la fuente de tiles, la localización del proyecto y la carga del mapa del panel Terreno."
+en = "Three main-window toolbars, inspired by SketchUp, for working with display styles, shadows and terrain without walking the Camera menu: the Styles one mirrors Camera ▸ Style with 13 buttons (the display styles and the X-ray toggle), the Shadows one adds a master switch plus date, time and intensity sliders, and the Map one gathers the tile source, the project location and the map loading of the Terreno panel."
+pt = "Três barras da janela principal, inspiradas no SketchUp, para trabalhar com os estilos de visualização, as sombras e o terreno sem percorrer o menu Câmera: a de estilos espelha Câmera ▸ Estilo com 13 botões (os estilos de visualização e o botão de raios X), a de sombras traz um interruptor geral e sliders de data, hora e intensidade, e a de mapa reúne a fonte de tiles, a localização do projeto e o carregamento do mapa do painel Terreno."
