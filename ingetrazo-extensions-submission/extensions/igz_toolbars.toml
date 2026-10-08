@@ -4,7 +4,7 @@
 # Copy this file to that repository as `extensions/igz_toolbars.toml` and open
 # a pull request. The `sha256` below is the fingerprint of the exact archive
 # built by `packaging/build_extension.ps1` / `packaging/build_extension.py`
-# and uploaded as the `v1.5.1` GitHub Release asset named `igz_tb_toolbar.zip`.
+# and uploaded as the `v1.5.2` GitHub Release asset named `igz_tb_toolbar.zip`.
 # If you rebuild the archive, replace `sha256` with the new value the build
 # script prints (or let the automatic check tell you the right one).
 #
@@ -13,23 +13,23 @@
 # archive is `igz_tb_toolbar/` (it installs into <plugins>/igz_tb_toolbar/).
 
 id = "igz_toolbars"
-version = "1.5.1"
+version = "1.5.2"
 author = "Ezequiel M. Rezende"
 author_url = "https://github.com/em-rezende"
 license = "GPL-3.0-or-later"
 repository = "https://github.com/em-rezende/Ingetrazo-igz-toolbars"
-download = "https://github.com/em-rezende/Ingetrazo-igz-toolbars/releases/download/v1.5.1/igz_tb_toolbar.zip"
-sha256 = "ad3ffed2a2f9af276c7499afee35e98bc92fa8ae5811c4aead26687203cd3eee"
+download = "https://github.com/em-rezende/Ingetrazo-igz-toolbars/releases/download/v1.5.2/igz_tb_toolbar.zip"
+sha256 = "bdd84b5c98bf500ac2bf2612764c0f729405bd232a1f81dc25e279e3ce49ed42"
 ingetrazo = "0.5.7"
-tags = ["rendering", "drawing", "productivity"]
+tags = ["rendering", "drawing", "terrain", "productivity"]
 screenshot = "igz_toolbars.png"
 
 [name]
-es = "Barras de estilos y sombras"
-en = "Styles and Shadows toolbars"
-pt = "Barras de estilos e sombras"
+es = "Barras de estilos, sombras y mapa"
+en = "Styles, Shadows and Map toolbars"
+pt = "Barras de estilos, sombras e mapa"
 
 [summary]
-es = "Dos barras inspiradas en SketchUp: la de estilos replica el menú Cámara ▸ Estilo con 13 botones, y la de sombras añade un interruptor y deslizadores de fecha, hora e intensidad."
-en = "Two SketchUp-inspired toolbars: the Styles one mirrors the Camera ▸ Style menu with 13 buttons, and the Shadows one adds a toggle plus date, time and intensity sliders."
-pt = "Duas barras inspiradas no SketchUp: a de estilos espelha o menu Câmera ▸ Estilo com 13 botões, e a de sombras traz um botão e sliders de data, hora e intensidade."
+es = "Tres barras inspiradas en SketchUp: la de estilos replica el menú Cámara ▸ Estilo con 13 botones, la de sombras añade un interruptor y deslizadores de fecha, hora e intensidad, y la de mapa reúne la fuente de tiles, la localización del proyecto y la carga del mapa del panel Terreno."
+en = "Three SketchUp-inspired toolbars: the Styles one mirrors the Camera ▸ Style menu with 13 buttons, the Shadows one adds a toggle plus date, time and intensity sliders, and the Map one gathers the tile source, the project location and the map loading of the Terreno panel."
+pt = "Três barras inspiradas no SketchUp: a de estilos espelha o menu Câmera ▸ Estilo com 13 botões, a de sombras traz um botão e sliders de data, hora e intensidade, e a de mapa reúne a fonte de tiles, a localização do projeto e o carregamento do mapa do painel Terreno."

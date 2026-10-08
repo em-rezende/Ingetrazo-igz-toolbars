@@ -16,8 +16,8 @@
 # =========================================================================
 # Extension: igz_tb_style (Com suporte a ícones temáticos)
 # Author: Ezequiel M. Rezende
-# Version: 1.5.1
-# Date: 2026-10-01
+# Version: 1.5.2
+# Date: 2026-10-08
 # License: GPL-3.0-or-later (same as IngeTrazo)
 #
 # IngeTrazo — "Styles" Toolbar

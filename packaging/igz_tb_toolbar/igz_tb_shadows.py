@@ -17,16 +17,12 @@
 # =========================================================================
 # Extension: igz_tb_shadows
 # Author: Ezequiel M. Rezende
-# Version: 3.3.0
-# Date: 2026-10-05
+# Version: 3.4.0
+# Date: 2026-10-08
 # License: GPL-3.0-or-later (same as IngeTrazo)
 #
-# IngeTrazo — "Shadows" Toolbar
+# IngeTrazo — "Shadows" and "Map" Toolbars
 # Location: <plugins>/igz_tb_toolbar/igz_tb_shadows.py
-#
-# v3.3.0 — Sliders coloridos (data sazonal e hora dia/noite) com marcas
-#          abaixo; nascer/pôr do sol calculados por algoritmo solar
-#          interno (sem dependências), usando utc_offset da cena.
 # =========================================================================
 
 from __future__ import annotations
@@ -91,6 +87,7 @@ _LOCAL_MONTH_LETTERS = {
 
 _LOCAL = {
     "en": {
+        "Shadows": "Shadows", "Map": "Map",
         "Date": "Date", "Time": "Time", "Int.": "Int.",
         "Location": "Location", "Select Location": "Select Location",
         "Calendar": "Calendar", "Toggle shadows on/off": "Toggle shadows on/off",
@@ -100,6 +97,7 @@ _LOCAL = {
         "Could not locate the IngeTrazo main window.": "Could not locate the IngeTrazo main window.",
     },
     "es": {
+        "Shadows": "Sombras", "Map": "Mapa",
         "Date": "Fecha", "Time": "Hora", "Int.": "Int.",
         "Location": "Ubicación", "Select Location": "Definir localización del proyecto",
         "Calendar": "Calendario", "Toggle shadows on/off": "Activar/desactivar sombras",
@@ -109,6 +107,7 @@ _LOCAL = {
         "Could not locate the IngeTrazo main window.": "No se pudo localizar la ventana principal de IngeTrazo.",
     },
     "id": {
+        "Shadows": "Bayangan", "Map": "Peta",
         "Date": "Tanggal", "Time": "Waktu", "Int.": "Int.",
         "Location": "Lokasi", "Select Location": "Definisikan lokasi proyek",
         "Calendar": "Kalender", "Toggle shadows on/off": "Nyalakan/matikan bayangan",
@@ -118,6 +117,7 @@ _LOCAL = {
         "Could not locate the IngeTrazo main window.": "Tidak dapat menemukan jendela utama IngeTrazo.",
     },
     "it": {
+        "Shadows": "Ombre", "Map": "Mappa",
         "Date": "Data", "Time": "Ora", "Int.": "Int.",
         "Location": "Posizione", "Select Location": "Definisci posizione del progetto",
         "Calendar": "Calendario", "Toggle shadows on/off": "Attiva/disattiva ombre",
@@ -127,6 +127,7 @@ _LOCAL = {
         "Could not locate the IngeTrazo main window.": "Impossibile trovare la finestra principale di IngeTrazo.",
     },
     "pt-BR": {
+        "Shadows": "Sombras", "Map": "Mapa",
         "Date": "Data", "Time": "Hora", "Int.": "Int.",
         "Location": "Localização", "Select Location": "Definir localização do projeto",
         "Calendar": "Calendário", "Toggle shadows on/off": "Ligar/desligar sombras",
@@ -500,26 +501,7 @@ def _minutes_to_text(minutes: int) -> str:
     return f"{minutes // 60:02d}:{minutes % 60:02d}"
 
 
-def _find_action(main_window, english: str):
-    own = {id(a) for a, _ in _LABELED_ACTIONS}
-    roots = []
-    menubar = getattr(main_window, "menuBar", None)
-    if callable(menubar):
-        bar = menubar()
-        if bar is not None:
-            roots.append(bar)
-    roots.append(main_window)
-    for root in roots:
-        for a in root.findChildren(QAction):
-            if id(a) in own:
-                continue
-            text = a.text()
-            if text == english or _it_source(text) == english or text == _t(english):
-                return a
-    return None
-
-
-# --- Construção da Barra de Ferramentas ------------------------------------
+# --- Construção das Barras de Ferramentas ----------------------------------
 _LABEL_WIDGETS: list = []
 _REFRESH_HOOKS: list = []
 _DATE_SLIDER: QSlider | None = None
@@ -986,15 +968,18 @@ def _make_location_widget(main_window) -> QWidget:
     return w
 
 _LABELED_ACTIONS: list = []
-_TOOLBARS: list = []
+_TOOLBAR_SHADOWS: QToolBar | None = None
+_TOOLBAR_MAP: QToolBar | None = None
 _LAST_LANG = None
 _LANG_TIMER = None
 
 
 def _retranslate() -> None:
-    title = _t("Shadows")
-    for tb in _TOOLBARS:
-        tb.setWindowTitle(title)
+    if _TOOLBAR_SHADOWS is not None:
+        _TOOLBAR_SHADOWS.setWindowTitle(_t("Shadows"))
+    if _TOOLBAR_MAP is not None:
+        _TOOLBAR_MAP.setWindowTitle(_t("Map"))
+
     for action, english in _LABELED_ACTIONS:
         action.setText(_t(english))
         action.setToolTip(_t("Toggle shadows on/off"))
@@ -1030,21 +1015,22 @@ _TOOLBAR_CREATED = False
 
 
 # ==========================================================================
-# Criação da barra de ferramentas
+# Criação das barras de ferramentas
 # ==========================================================================
-def _create_shadows_toolbar(main_window) -> None:
-    global _TOOLBAR_CREATED
+def _create_toolbars(main_window) -> None:
+    global _TOOLBAR_CREATED, _TOOLBAR_SHADOWS, _TOOLBAR_MAP
     if _TOOLBAR_CREATED:
         return
     if main_window is None or not hasattr(main_window, "addToolBar"):
         return
 
     try:
-        tb = QToolBar(_t("Shadows"), main_window)
-        tb.setObjectName("igz_tb_shadows")
-        tb.setWindowTitle(_t("Shadows"))
-        main_window.addToolBar(Qt.TopToolBarArea, tb)
-        _TOOLBARS.append(tb)
+        # 1. Toolbar "Shadows"
+        tb_shadows = QToolBar(_t("Shadows"), main_window)
+        tb_shadows.setObjectName("igz_tb_shadows")
+        tb_shadows.setWindowTitle(_t("Shadows"))
+        main_window.addToolBar(Qt.TopToolBarArea, tb_shadows)
+        _TOOLBAR_SHADOWS = tb_shadows
 
         icon = _load_themed_icon("tb_shadowtoggle", main_window)
 
@@ -1062,31 +1048,32 @@ def _create_shadows_toolbar(main_window) -> None:
             _toggle_shadows(main_window, checked)
 
         act.toggled.connect(_on_toggle)
-        tb.addAction(act)
+        tb_shadows.addAction(act)
 
-        tb.addSeparator()
-        tb.addWidget(_make_date_slider(main_window))
-        tb.addSeparator()
-        tb.addWidget(_make_time_slider(main_window))
-        tb.addSeparator()
-        tb.addWidget(_make_calendar_button(main_window))
-        tb.addSeparator()
-        tb.addWidget(_make_intensity_slider(main_window))
-        tb.addSeparator()
-        tb.addWidget(_make_map_source_combo(main_window))
-        tb.addSeparator()
-        tb.addWidget(_make_location_widget(main_window))
+        tb_shadows.addSeparator()
+        tb_shadows.addWidget(_make_date_slider(main_window))
+        tb_shadows.addSeparator()
+        tb_shadows.addWidget(_make_time_slider(main_window))
+        tb_shadows.addSeparator()
+        tb_shadows.addWidget(_make_calendar_button(main_window))
+        tb_shadows.addSeparator()
+        tb_shadows.addWidget(_make_intensity_slider(main_window))
 
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        tb.addWidget(spacer)
+        # 2. Toolbar "Map"
+        tb_map = QToolBar(_t("Map"), main_window)
+        tb_map.setObjectName("igz_tb_map")
+        tb_map.setWindowTitle(_t("Map"))
+        main_window.addToolBar(Qt.TopToolBarArea, tb_map)
+        _TOOLBAR_MAP = tb_map
 
-        tb.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        tb_map.addWidget(_make_map_source_combo(main_window))
+        tb_map.addSeparator()
+        tb_map.addWidget(_make_location_widget(main_window))
 
         _TOOLBAR_CREATED = True
         _install_language_watcher()
         _refresh_sun_marks()
-        _log("'Shadows' toolbar created")
+        _log("'Shadows' and 'Map' toolbars created")
     except Exception:
         traceback.print_exc()
 
@@ -1106,6 +1093,6 @@ def setup(app):
             )
             return
 
-        _create_shadows_toolbar(mw)
+        _create_toolbars(mw)
     except Exception:
         traceback.print_exc()

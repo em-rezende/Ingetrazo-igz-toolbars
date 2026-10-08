@@ -1,20 +1,24 @@
-# IngeTrazo Extensions — "Styles" and "Shadows" Toolbars
+# IngeTrazo Extensions — "Styles", "Shadows" and "Map" Toolbars
 
-Two toolbars for [IngeTrazo](https://github.com/ingelibre/ingetrazo),
-inspired by SketchUp: one for **display styles**, one for **shadows**.
+Three toolbars for [IngeTrazo](https://github.com/ingelibre/ingetrazo):
+two inspired by SketchUp — one for **display styles** and one for
+**shadows** — plus one for the **map** (tile source and project
+location).
 
 - **Author:** Ezequiel M. Rezende
-- **Date:** 2026-10-01
-- **Version:** 1.5.1
+- **Date:** 2026-10-08
+- **Version:** 1.5.2
 - **License:** [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html)
   (same as IngeTrazo — see [LICENSE](https://github.com/ingelibre/ingetrazo/blob/main/LICENSE))
 
 ---
 
-![IngeTrazo with the "Styles" and "Shadows" toolbars on screen](screenshots/igz-toolbars-main.png)
+![IngeTrazo with the "Shadows" and "Map" toolbars on screen](screenshots/igz-toolbars-main.png)
 
-*The **Styles** toolbar (thirteen style buttons) and the **Shadows**
-toolbar (date, time, calendar, intensity, map source and location).*
+*The **Shadows** toolbar (toggle, date, time, calendar and intensity)
+and the **Map** toolbar (tile source and project location) over the
+viewport. The **Styles** toolbar (thirteen style buttons) sits in the
+same top area.*
 
 ---
 
@@ -25,7 +29,7 @@ toolbar (date, time, calendar, intensity, map source and location).*
 └── igz_tb_toolbar/
     ├── __init__.py              # package entry point (setup(app))
     ├── igz_tb_style.py          # "Styles" toolbar
-    ├── igz_tb_shadows.py        # "Shadows" toolbar
+    ├── igz_tb_shadows.py        # "Shadows" and "Map" toolbars
     ├── README.md                # this file
     ├── README_ptBR.md           # Portuguese version
     ├── LICENSE                  # full GPL-3.0 text
@@ -93,8 +97,9 @@ menu never fall out of sync.
 
 ## "Shadows" Toolbar
 
-A toggle, two colour-coded sliders, a calendar button, an intensity
-slider and a row of source/location controls, following the SketchUp model.
+A toggle, two colour-coded sliders, a calendar button and an intensity
+slider, following the SketchUp model. The map controls live in their own
+toolbar (see *"Map" Toolbar* below).
 
 | Control | Field affected | Range |
 |---------|----------------|-------|
@@ -103,8 +108,6 @@ slider and a row of source/location controls, following the SketchUp model.
 | **Time** slider | `scene.shadows.hour` + `.minute` | 0–1439 min |
 | **Calendar** (icon) | `scene.shadows.month`/`.day`/`.hour`/`.minute` | date + time dialog |
 | **Int.** slider | `scene.shadows.darkness` | 0–100 (→ 0.0–1.0) |
-| **Source** combo | Terreno panel map source | Esri / Sentinel-2 / OSM |
-| **Location** row | `scene.shadows.latitude` + `.longitude` | coords + map picker |
 
 Notes on the controls:
 
@@ -116,12 +119,6 @@ Notes on the controls:
   **sunrise**, **Noon** and **sunset** underneath.
 - **Calendar button** — opens a dialog with a `QCalendarWidget` and a
   `QTimeEdit` to enter an exact date and time.
-- **Source / Location / Load map** — integrate with IngeTrazo's
-  **Terreno** (BaseMap) panel: choose the tile source, then type the
-  project coordinates or use the map-picker button, which runs the
-  panel's native *Search location* command. *Load map* keeps the fetched
-  tiles; when it is off, the tiles are discarded once the coordinates are
-  applied.
 
 The **sunrise** and **sunset** marks are computed by an **internal solar
 algorithm with no external dependencies** (*Almanac for Computers* /
@@ -136,6 +133,32 @@ redraws everything automatically. Nothing else needs to be touched.
 
 Dragging any slider automatically turns shadows on (otherwise the
 adjustments would not be visible).
+
+---
+
+## "Map" Toolbar
+
+The tile-source combo and the project-location row used to share the
+Shadows toolbar; they now live in their own toolbar, so shadows and
+georeferencing can be shown, moved or hidden independently.
+
+| Control | Field affected | Range |
+|---------|----------------|-------|
+| **Source** combo | Terreno panel map source | Esri / Sentinel-2 / OSM |
+| **Location** row | `scene.shadows.latitude` + `.longitude` | coords + map picker |
+| **Load map** check | whether the fetched tiles are kept | on/off |
+
+- **Source / Location / Load map** — integrate with IngeTrazo's
+  **Terreno** (BaseMap) panel: choose the tile source, then type the
+  project coordinates or use the map-picker button, which runs the
+  panel's native *Search location* command. *Load map* keeps the fetched
+  tiles; when it is off, the tiles are discarded once the coordinates are
+  applied.
+
+**Mechanism:** the location controls write `latitude` / `longitude` on
+`scene.shadows` and then call `viewport.update()`, so the solar marks in
+the Shadows toolbar update immediately. Opening the native georeference
+dialog is delegated to the **Terreno** panel command described above.
 
 ---
 
@@ -181,7 +204,7 @@ marked with `⚠️ FRAGILE` in the source code. Consolidated list:
 | `ShadowSettings.{enabled, month, day, hour, minute, darkness, latitude, longitude, utc_offset}` | various | Internal dataclass (`core.sun`) |
 | `BaseMapPanel` internals (`_source`, `_find`, `_lat`, `_lon`, `_last_sid`) | `_find_base_map_panel` / `_open_native_georef_dialog` | Reached through `findChildren`; the **Terreno** panel is not a public API |
 | `scene.{tile_layer, terrain, photo_mesh}` snapshot | `_open_native_georef_dialog` | Internal scene attributes, restored when *Load map* is off |
-| `QToolBar` + `MainWindow.addToolBar(...)` | `_create_shadows_toolbar` | Same as above |
+| `QToolBar` + `MainWindow.addToolBar(...)` | `_create_toolbars` | Same as above; creates the **Shadows** and **Map** toolbars |
 
 ### What **is** compliant with `plugins.md`
 
@@ -231,9 +254,10 @@ IngeTrazo's UI is translated with a lightweight JSON catalog
 - **Native command names** (`Default`, `Edges`, `Shadows`, …) come straight
   from IngeTrazo's own catalog through `tr()`, so they always match what
   the **Camera ▸ Style** menu shows.
-- **Our own strings** (toolbar titles, the `Date`/`Time`/`Int.` slider
-  labels, `Location`, `Select Location`, `Calendar`, `Source`, `Load map`,
-  `Noon`, the toggle tooltip and the error dialog) are not in IngeTrazo's
+- **Our own strings** (the `Shadows` and `Map` toolbar titles, the
+  `Date`/`Time`/`Int.` slider labels, `Location`, `Select Location`,
+  `Calendar`, `Source`, `Load map`, `Noon`, the toggle tooltip and the
+  error dialog) are not in IngeTrazo's
   catalog, so the plugin carries a small table for English, Spanish,
   Indonesian, Italian and Brazilian Portuguese; anything else falls back
   to English. The month abbreviations and the month initials under the
@@ -266,7 +290,7 @@ plugin's own few strings into a new language, add its code to `_LOCAL`
    files end up at `<plugins>/igz_tb_toolbar/`.
 3. Restart IngeTrazo.
 
-The **Styles** and **Shadows** toolbars appear in the top area.
+The **Styles**, **Shadows** and **Map** toolbars appear in the top area.
 
 ### From the IngeTrazo extension catalog
 
@@ -300,11 +324,13 @@ The extension is also packaged for the community catalog at
   day's **sunrise**, **noon** and **sunset**).
 - Click the **Calendar** button to pick an exact **date and time**.
 - Drag the **Int.** slider → shadow gets lighter or darker.
+
+### Map
 - Choose a tile **Source** and set the **Location** (type the coordinates
   or use the map-picker button) to define the project's
-  latitude/longitude; the sunrise/sunset marks follow. *Load map* keeps
-  the fetched map tiles, otherwise they are discarded after the
-  coordinates are applied.
+  latitude/longitude; the sunrise/sunset marks in the Shadows toolbar
+  follow. *Load map* keeps the fetched map tiles, otherwise they are
+  discarded after the coordinates are applied.
 
 ---
 
@@ -314,9 +340,9 @@ Everything `plugins.md` recommends that is **not** implemented yet.
 None of these improvements are required — the toolbars work fine
 without them.
 
-1. **`Tool` subclass** for each extension: "Styles…" and "Shadows…" in
-   the Extensions menu, with shortcuts. Lets the user reopen the toolbar
-   if it gets closed.
+1. **`Tool` subclass** for each extension: "Styles…", "Shadows…" and
+   "Map…" in the Extensions menu, with shortcuts. Lets the user reopen a
+   toolbar if it gets closed.
 
 2. **Persistence in `app.document_data`**: store slider positions in the
    `.igz` so that reopening restores everything as it was.

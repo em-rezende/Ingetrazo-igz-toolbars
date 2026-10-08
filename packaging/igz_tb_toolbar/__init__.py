@@ -18,11 +18,11 @@
 # Extension: igz_tb_toolbar — package entry point
 # Location: <plugins>/igz_tb_toolbar/__init__.py
 # Author: Ezequiel M. Rezende
-# Version: 1.5.1
-# Date: 2026-10-01
+# Version: 1.5.2
+# Date: 2026-10-08
 # License: GPL-3.0-or-later (same as IngeTrazo)
 #
-# IngeTrazo — "Styles" and "Shadows" toolbars.
+# IngeTrazo — "Styles", "Shadows" and "Map" toolbars.
 #
 # The IngeTrazo extension catalog installs ONE file per entry: a .py file,
 # or a .zip holding a single folder with an __init__.py. This package is
@@ -32,8 +32,9 @@
 #   • igz_tb_style.py    — "Styles" toolbar (13 buttons that mirror the
 #                          native Camera ▸ Style menu).
 #   • igz_tb_shadows.py  — "Shadows" toolbar (toggle + date/time/intensity
-#                          sliders).
-#   • icons/             — SVG icons for both toolbars.
+#                          sliders) and "Map" toolbar (tile source and
+#                          project location).
+#   • icons/             — SVG icons for all toolbars.
 #
 # Both modules are written as standalone single-file plugins: each exposes
 # its own `setup(app)`. This __init__.py loads them by file path (so it

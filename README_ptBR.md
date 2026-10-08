@@ -1,20 +1,23 @@
-# Extensões IngeTrazo — Barras "Styles" e "Shadows"
+# Extensões IngeTrazo — Barras "Styles", "Shadows" e "Map"
 
-Duas barras de ferramenta para o [IngeTrazo](https://github.com/ingelibre/ingetrazo),
-inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
+Três barras de ferramenta para o [IngeTrazo](https://github.com/ingelibre/ingetrazo):
+duas inspiradas no SketchUp — uma de **estilos de exibição** e outra de
+**sombras** — e mais uma do **mapa** (fonte de tiles e localização do
+projeto).
 
 - **Autor:** Ezequiel M. Rezende
-- **Data:** 2026-10-01
-- **Versão:** 1.5.1
+- **Data:** 2026-10-08
+- **Versão:** 1.5.2
 - **Licença:** [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html)
   (mesma do IngeTrazo — ver [LICENSE](https://github.com/ingelibre/ingetrazo/blob/main/LICENSE))
 
 ---
 
-![IngeTrazo com as barras "Styles" e "Shadows" na tela](screenshots/igz-toolbars-main.png)
+![IngeTrazo com as barras "Shadows" e "Map" na tela](screenshots/igz-toolbars-main.png)
 
-*A barra **Styles** (treze botões de estilo) e a barra **Shadows**
-(data, hora, calendário, intensidade, fonte de mapa e localização).*
+*As barras **Shadows** (botão, data, hora, calendário e intensidade) e
+**Map** (fonte de tiles e localização do projeto) sobre a viewport. A
+barra **Styles** (treze botões de estilo) fica na mesma área superior.*
 
 ---
 
@@ -25,7 +28,7 @@ inspiradas no SketchUp: uma de **estilos de exibição** e outra de **sombras**.
 └── igz_tb_toolbar/
     ├── __init__.py              # ponto de entrada do pacote (setup(app))
     ├── igz_tb_style.py          # barra "Styles"
-    ├── igz_tb_shadows.py        # barra "Shadows"
+    ├── igz_tb_shadows.py        # barras "Shadows" e "Map"
     ├── README.md                # este arquivo (inglês)
     ├── README_ptBR.md           # esta versão em português
     ├── LICENSE                  # texto completo da GPL-3.0
@@ -94,9 +97,9 @@ menu nunca saem de sincronia.
 
 ## Barra "Shadows"
 
-Um toggle, dois sliders coloridos, um botão de calendário, um slider de
-intensidade e uma linha de controles de fonte/localização, seguindo o
-modelo do SketchUp.
+Um toggle, dois sliders coloridos, um botão de calendário e um slider de
+intensidade, seguindo o modelo do SketchUp. Os controles de mapa ficaram
+em uma barra própria (ver *Barra "Map"* abaixo).
 
 | Controle | Campo afetado | Faixa |
 |----------|---------------|-------|
@@ -105,8 +108,6 @@ modelo do SketchUp.
 | **Hora** (slider) | `scene.shadows.hour` + `.minute` | 0–1439 min |
 | **Calendário** (ícone) | `scene.shadows.month`/`.day`/`.hour`/`.minute` | diálogo de data + hora |
 | **Int.** (slider) | `scene.shadows.darkness` | 0–100 (→ 0.0–1.0) |
-| **Fonte** (combo) | fonte de mapa do painel Terreno | Esri / Sentinel-2 / OSM |
-| **Localização** (linha) | `scene.shadows.latitude` + `.longitude` | coordenadas + seletor no mapa |
 
 Notas sobre os controles:
 
@@ -118,12 +119,6 @@ Notas sobre os controles:
   o **Meio-dia** e o **pôr do sol** do dia embaixo.
 - **Botão Calendário** — abre um diálogo com `QCalendarWidget` e
   `QTimeEdit` para digitar data e hora exatas.
-- **Fonte / Localização / Carregar mapa** — integram com o painel
-  **Terreno** (BaseMap) do IngeTrazo: escolha a fonte dos tiles, digite as
-  coordenadas do projeto ou use o botão de seleção no mapa, que roda o
-  comando nativo *Buscar localização* do painel. *Carregar mapa* mantém os
-  tiles baixados; se estiver desmarcado, os tiles são descartados assim que
-  as coordenadas são aplicadas.
 
 As marcas de **nascer** e **pôr do sol** são calculadas por um **algoritmo
 solar interno, sem dependências externas** (*Almanac for Computers* /
@@ -138,6 +133,34 @@ redesenha tudo automaticamente. Nada mais precisa ser tocado.
 
 Arrastar qualquer slider liga as sombras automaticamente (senão os
 ajustes não ficariam visíveis).
+
+---
+
+## Barra "Map"
+
+O combo de fonte de tiles e a linha de localização do projeto dividiam a
+barra Shadows; agora ficam em uma barra própria, para que sombras e
+georreferenciamento possam ser exibidos, movidos ou escondidos de forma
+independente.
+
+| Controle | Campo afetado | Faixa |
+|----------|---------------|-------|
+| **Fonte** (combo) | fonte de mapa do painel Terreno | Esri / Sentinel-2 / OSM |
+| **Localização** (linha) | `scene.shadows.latitude` + `.longitude` | coordenadas + seletor no mapa |
+| **Carregar mapa** (caixa) | se os tiles baixados são mantidos | marcado/desmarcado |
+
+- **Fonte / Localização / Carregar mapa** — integram com o painel
+  **Terreno** (BaseMap) do IngeTrazo: escolha a fonte dos tiles, digite as
+  coordenadas do projeto ou use o botão de seleção no mapa, que roda o
+  comando nativo *Buscar localização* do painel. *Carregar mapa* mantém os
+  tiles baixados; se estiver desmarcado, os tiles são descartados assim que
+  as coordenadas são aplicadas.
+
+**Mecanismo:** os controles de localização gravam `latitude` / `longitude`
+em `scene.shadows` e chamam `viewport.update()`, então as marcas solares
+da barra Shadows se atualizam na hora. Abrir o diálogo nativo de
+georreferenciamento é delegado ao comando do painel **Terreno** descrito
+acima.
 
 ---
 
@@ -183,7 +206,7 @@ marcados com `⚠️ FRÁGIL` no código-fonte. Lista consolidada:
 | `ShadowSettings.{enabled, month, day, hour, minute, darkness, latitude, longitude, utc_offset}` | várias | Dataclass interna (`core.sun`) |
 | Internos do `BaseMapPanel` (`_source`, `_find`, `_lat`, `_lon`, `_last_sid`) | `_find_base_map_panel` / `_open_native_georef_dialog` | Alcançados via `findChildren`; o painel **Terreno** não é API pública |
 | Snapshot de `scene.{tile_layer, terrain, photo_mesh}` | `_open_native_georef_dialog` | Atributos internos da cena, restaurados quando *Carregar mapa* está desligado |
-| `QToolBar` + `MainWindow.addToolBar(...)` | `_create_shadows_toolbar` | Idem acima |
+| `QToolBar` + `MainWindow.addToolBar(...)` | `_create_toolbars` | Idem acima; cria as barras **Shadows** e **Map** |
 
 ### O que **está** de acordo com o `plugins.md`
 
@@ -232,8 +255,9 @@ A interface do IngeTrazo é traduzida por um catálogo JSON leve
 - **Nomes de comandos nativos** (`Default`, `Edges`, `Shadows`…) vêm
   direto do catálogo do IngeTrazo via `tr()`, então sempre batem com o que
   o menu **Câmera ▸ Estilo** mostra.
-- **Nossas próprias strings** (títulos das barras, os rótulos dos sliders
-  `Date`/`Time`/`Int.`, `Location`, `Select Location`, `Calendar`, `Source`,
+- **Nossas próprias strings** (os títulos das barras `Shadows` e `Map`, os
+  rótulos dos sliders `Date`/`Time`/`Int.`, `Location`, `Select Location`,
+  `Calendar`, `Source`,
   `Load map`, `Noon`, a dica do toggle e o diálogo de erro) não estão no
   catálogo do IngeTrazo, então o plugin traz uma pequena tabela para
   inglês, espanhol, indonésio, italiano e português do Brasil; qualquer
@@ -266,7 +290,7 @@ em `_LOCAL` (e, para as abreviações/iniciais de mês, `_LOCAL_MONTHS` e
    `<plugins>/igz_tb_toolbar/`.
 3. Reinicie o IngeTrazo.
 
-As barras **Styles** e **Shadows** aparecem na área superior.
+As barras **Styles**, **Shadows** e **Map** aparecem na área superior.
 
 ### A partir do catálogo de extensões do IngeTrazo
 
@@ -300,11 +324,13 @@ A extensão também está empacotada para o catálogo da comunidade em
   sol**, o **meio-dia** e o **pôr do sol** daquele dia).
 - Clique no botão **Calendário** para escolher **data e hora** exatas.
 - Arraste o slider **Int.** → sombra mais clara ou mais escura.
+
+### Map
 - Escolha uma **Fonte** de tiles e defina a **Localização** (digite as
   coordenadas ou use o botão de seleção no mapa) para definir a
-  latitude/longitude do projeto; as marcas de nascer/pôr do sol
-  acompanham. *Carregar mapa* mantém os tiles baixados; caso contrário
-  eles são descartados depois de aplicar as coordenadas.
+  latitude/longitude do projeto; as marcas de nascer/pôr do sol na barra
+  Shadows acompanham. *Carregar mapa* mantém os tiles baixados; caso
+  contrário eles são descartados depois de aplicar as coordenadas.
 
 ---
 
@@ -313,9 +339,9 @@ A extensão também está empacotada para o catálogo da comunidade em
 Tudo o que o `plugins.md` recomenda e que ainda **não** está implementado.
 Nenhuma destas melhorias é necessária — as barras funcionam bem sem elas.
 
-1. **`Tool` subclasse** para cada extensão: "Styles…" e "Shadows…" no
-   menu Extensions, com atalhos. Permite que o usuário reabra a barra se
-   ela for fechada.
+1. **`Tool` subclasse** para cada extensão: "Styles…", "Shadows…" e
+   "Map…" no menu Extensions, com atalhos. Permite que o usuário reabra
+   uma barra se ela for fechada.
 
 2. **Persistência em `app.document_data`**: guardar as posições dos
    sliders no `.igz` para que, ao reabrir, tudo esteja como estava.
@@ -362,9 +388,11 @@ para mais detalhes.
 
 | Seção | Inglês | Português |
 |---|---|---|
-| Título | Extensions — "Styles" and "Shadows" Toolbars | Extensões — Barras "Styles" e "Shadows" |
+| Título | Extensions — "Styles", "Shadows" and "Map" Toolbars | Extensões — Barras "Styles", "Shadows" e "Map" |
 | Arquivos | Files | Arquivos |
 | Barra Styles | "Styles" Toolbar | Barra "Styles" |
+| Barra Shadows | "Shadows" Toolbar | Barra "Shadows" |
+| Barra Map | "Map" Toolbar | Barra "Map" |
 | Botão (origem) | Button (source) | Botão (origem) |
 | Tipo | Type | Tipo |
 | Estilo / toggle | style / toggle | estilo / toggle |
