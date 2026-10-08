@@ -1,7 +1,9 @@
 # Submission bundle — IngeTrazo extension catalog
 
-> **Update bundle for the IngeTrazo extension catalog.** v1.4.0 and v1.5.1 are
-> already published; these are the files to copy into a pull request of
+> **Update bundle for the IngeTrazo extension catalog.** The catalog on `main`
+> published v1.4.0 and then 1.5.0; the 1.5.1 pull request
+> (<https://github.com/ingelibre/ingetrazo-extensions/pull/58>) is still open.
+> These are the files to copy into a pull request of
 > <https://github.com/ingelibre/ingetrazo-extensions> to publish v1.5.2 — the
 > version with the **three** toolbars (*Styles*, *Shadows* and *Map*).
 
@@ -23,8 +25,8 @@ in the template checklist.
 ## Before you submit
 
 - The `download` URL points at the **v1.5.2** GitHub Release asset
-  `igz_tb_toolbar.zip`, so create that tag/release in this repository first and
-  upload `dist/igz_tb_toolbar.zip` as the asset with that exact name.
+  `igz_tb_toolbar.zip`, which is already published (68 553 bytes). Re-upload it
+  with `packaging/publish_release.ps1` if the archive is ever rebuilt.
 - The `sha256` in the entry must match that asset byte-for-byte:
   `bdd84b5c98bf500ac2bf2612764c0f729405bd232a1f81dc25e279e3ce49ed42`.
   Rebuild with `packaging/build_extension.ps1` (or
